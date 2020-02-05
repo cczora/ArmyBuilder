@@ -1,49 +1,28 @@
 package com.cczora.armybuilder.models;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class FactionType {
-    
+@Entity
+@Builder
+@Getter
+@Setter
+@Table(name = "faction_type")
+public class FactionType implements Serializable {
+
+    @Id
     private UUID factionTypeId;
-    
+
+    @Column(nullable = false)
     private String name;
-    
-    public FactionType() {
-    }
-
-    public FactionType(UUID factionTypeId, String name) {
-        this.factionTypeId = factionTypeId;
-        this.name = name;
-    }
-
-    public UUID getFactionTypeId() {
-        return factionTypeId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setFactionTypeId(UUID factionTypeId) {
-        this.factionTypeId = factionTypeId;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FactionType that = (FactionType) o;
-        return Objects.equals(factionTypeId, that.factionTypeId) &&
-                Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(factionTypeId, name);
-    }
 }

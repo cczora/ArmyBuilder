@@ -1,9 +1,11 @@
 package com.cczora.armybuilder.models;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Data
 @Entity
+@Builder
+@Getter
+@Setter
 public class Army implements Serializable {
 
     @Id
@@ -21,94 +25,32 @@ public class Army implements Serializable {
 
     @NotBlank(message = "Name required.")
     @Size(max = 50, message = "Name too long.")
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String username;
 
     @NotNull(message = "Faction required.")
+    @Column(name = "faction_type_id", nullable = false)
     private UUID factionTypeId;
 
+    @ManyToOne
+    @JoinColumn(name = "faction_type_id", nullable = false)
     private FactionType faction;
 
+    @Column(name = "command_points")
     private int commandPoints;
 
     @NotNull(message = "Size class required.")
+    @Column(name = "size", nullable = false)
     private String sizeClass;
 
+    @OneToMany
+    @JoinTable(name = "detachment")
     List<Detachment> detachments = new ArrayList<>();
 
     @Size(max = 255, message = "You have exceeded the character limit for notes.")
+    @Column
     private String notes;
-
-    public UUID getFactionTypeId() {
-        return factionTypeId;
-    }
-
-    public void setFactionTypeId(UUID factionTypeId) {
-        this.factionTypeId = factionTypeId;
-    }
-
-    public FactionType getFaction() {
-        return faction;
-    }
-
-    public void setFaction(FactionType faction) {
-        this.faction = faction;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public UUID getArmyId() {
-        return armyId;
-    }
-
-    public void setArmyId(UUID armyId) {
-        this.armyId = armyId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCommandPoints() {
-        return commandPoints;
-    }
-
-    public void setCommandPoints(int commandPoints) {
-        this.commandPoints = commandPoints;
-    }
-
-    public String getSizeClass() {
-        return sizeClass;
-    }
-
-    public void setSizeClass(String sizeClass) {
-        this.sizeClass = sizeClass;
-    }
-
-    public List<Detachment> getDetachments() {
-        return detachments;
-    }
-
-    public void setDetachments(List<Detachment> detachments) {
-        this.detachments = detachments;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
 }

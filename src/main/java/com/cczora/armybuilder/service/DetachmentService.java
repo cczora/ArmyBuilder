@@ -1,7 +1,12 @@
 package com.cczora.armybuilder.service;
 
+import com.cczora.armybuilder.data.DetachmentRepository;
 import com.cczora.armybuilder.models.Detachment;
 import com.cczora.armybuilder.models.DetachmentType;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +14,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
+@AllArgsConstructor
+@NoArgsConstructor
 public class DetachmentService {
 
-    private final UnitOfWork unit;
-
-    @Autowired
-    public DetachmentService(UnitOfWork unit) {
-        this.unit = unit;
-    }
+    private final DetachmentRepository detachmentRepository;
 
     public List<DetachmentType> getAllDetachmentTypes() {
         return unit.getAllDetachmentTypes();

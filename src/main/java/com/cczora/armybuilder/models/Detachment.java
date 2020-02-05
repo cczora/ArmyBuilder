@@ -1,108 +1,58 @@
 package com.cczora.armybuilder.models;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Detachment {
+@Entity
+@Builder
+@Getter
+@Setter
+public class Detachment implements Serializable {
 
+    @Id
+    @Column(name = "detachment_id")
     private UUID detachmentId;
 
+    @Column(name = "army_id", nullable = false)
     private UUID armyId;
 
+    @Column(name = "detachment_type_id", nullable = false)
     private UUID detachmentTypeId;
 
+    @ManyToOne
+    @JoinColumn(name = "detachment_type_id", nullable = false)
     private DetachmentType detachmentType;
 
+    @Column(name = "faction_type_id", nullable = false)
     private UUID factionTypeId;
 
+    @ManyToOne
+    @JoinColumn(name = "faction_type_id", nullable = false)
     private FactionType faction;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column
     private String notes;
 
+    @OneToMany
+    @JoinTable(name = "unit")
     private List<Unit> units = new ArrayList<>();
 
-    public UUID getDetachmentId() {
-        return detachmentId;
-    }
-
-    public void setDetachmentId(UUID detachmentId) {
-        this.detachmentId = detachmentId;
-    }
-
-    public UUID getArmyId() {
-        return armyId;
-    }
-
-    public void setArmyId(UUID armyId) {
-        this.armyId = armyId;
-    }
-
-    public UUID getDetachmentTypeId() {
-        return detachmentTypeId;
-    }
-
-    public void setDetachmentTypeId(UUID detachmentTypeId) {
-        this.detachmentTypeId = detachmentTypeId;
-    }
-
-    public DetachmentType getDetachmentType() {
-        return detachmentType;
-    }
-
-    public void setDetachmentType(DetachmentType detachmentType) {
-        this.detachmentType = detachmentType;
-    }
-
-    public UUID getFactionTypeId() {
-        return factionTypeId;
-    }
-
-    public void setFactionTypeId(UUID factionTypeId) {
-        this.factionTypeId = factionTypeId;
-    }
-
-    public FactionType getFaction() {
-        return faction;
-    }
-
-    public void setFaction(FactionType faction) {
-        this.faction = faction;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public List<Unit> getUnits() {
-        return units;
-    }
-
-    public void setUnits(List<Unit> units) {
-        this.units = units;
-    }
-
     public void sortUnits(Detachment detachment) {
-        detachment.setUnits(
-                detachment.getUnits().stream().
+                detachment.units = detachment.units.stream().
                         sorted()
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList());
     }
 
     @Override

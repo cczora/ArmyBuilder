@@ -1,67 +1,39 @@
 package com.cczora.armybuilder.models;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
+@Entity
+@Builder
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class Unit {
+
+    @Id
     private UUID unitId;
 
+    @Column(name = "unit_type_id", nullable = false)
     private UUID unitTypeId;
 
+    @ManyToOne
+    @JoinColumn(name = "unit_type_id")
     private UnitType unitType;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column
     private String notes;
 
+    @Column(name = "detachment_id", nullable = false)
     private UUID detachmentId;
-
-    public UUID getUnitId() {
-        return unitId;
-    }
-
-    public void setUnitId(UUID unitId) {
-        this.unitId = unitId;
-    }
-
-    public UUID getUnitTypeId() {
-        return unitTypeId;
-    }
-
-    public void setUnitTypeId(UUID unitTypeId) {
-        this.unitTypeId = unitTypeId;
-    }
-
-    public UnitType getUnitType() {
-        return unitType;
-    }
-
-    public void setUnitType(UnitType unitType) {
-        this.unitType = unitType;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public UUID getDetachmentId() {
-        return detachmentId;
-    }
-
-    public void setDetachmentId(UUID detachmentId) {
-        this.detachmentId = detachmentId;
-    }
 
     @Override
     public boolean equals(Object o) {

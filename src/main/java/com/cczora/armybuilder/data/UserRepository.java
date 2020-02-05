@@ -1,4 +1,4 @@
-package data;
+package com.cczora.armybuilder.data;
 
 import com.cczora.armybuilder.models.Account;
 import org.springframework.data.jpa.repository.JpaRepository;

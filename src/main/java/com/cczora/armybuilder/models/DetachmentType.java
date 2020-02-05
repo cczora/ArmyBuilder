@@ -1,61 +1,29 @@
 package com.cczora.armybuilder.models;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 import java.util.UUID;
 
+@Entity
+@Builder
+@Getter
+@Setter
+@Table(name = "detachment_type")
 public class DetachmentType {
+    @Id
+    @Column(name = "detachment_type_id")
     private UUID detachmentTypeId;
-    
+
+    @Column(nullable = false)
     private String name;
-    
+
+    @Column(name = "command_pts", nullable = false)
     private int commandPoints;
-    
-    public DetachmentType() {
-        
-    }
-
-    public DetachmentType(UUID detachmentTypeId, String name, int commandPoints) {
-        this.detachmentTypeId = detachmentTypeId;
-        this.name = name;
-        this.commandPoints = commandPoints;
-    }
-
-    public UUID getDetachmentTypeId() {
-        return detachmentTypeId;
-    }
-
-    public void setDetachmentTypeId(UUID detachmentTypeId) {
-        this.detachmentTypeId = detachmentTypeId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCommandPoints() {
-        return commandPoints;
-    }
-
-    public void setCommandPoints(int commandPoints) {
-        this.commandPoints = commandPoints;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DetachmentType that = (DetachmentType) o;
-        return commandPoints == that.commandPoints &&
-                Objects.equals(detachmentTypeId, that.detachmentTypeId) &&
-                Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(detachmentTypeId, name, commandPoints);
-    }
 }

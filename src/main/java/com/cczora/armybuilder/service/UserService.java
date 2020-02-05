@@ -1,8 +1,10 @@
 package com.cczora.armybuilder.service;
 
 import com.cczora.armybuilder.models.Account;
-import data.UserRepository;
+import com.cczora.armybuilder.data.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepository users;

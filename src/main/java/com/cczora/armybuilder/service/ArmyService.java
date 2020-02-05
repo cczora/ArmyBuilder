@@ -1,27 +1,23 @@
 package com.cczora.armybuilder.service;
 
 import com.cczora.armybuilder.models.Army;
-import com.cczora.armybuilder.models.DetachmentType;
 import com.cczora.armybuilder.models.FactionType;
-import com.cczora.armybuilder.models.UnitType;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cczora.armybuilder.data.ArmyRepository;
+import com.cczora.armybuilder.data.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class ArmyService {
 
-    private final UnitOfWork unit;
-
-    @Autowired
-    public ArmyService(UnitOfWork unit) {
-        this.unit = unit;
-    }
+    private ArmyRepository armyRepo;
 
     public Army getArmyById(UUID armyId) {
-        return unit.getArmyById(armyId);
+        return armyRepo.getArmyById(armyId);
     }
 
     public List<Army> getArmiesByUsername(String username) {
@@ -30,14 +26,6 @@ public class ArmyService {
 
     public List<FactionType> getAllFactions() {
         return unit.getAllFactions();
-    }
-
-    public List<UnitType> getAllUnitTypes() {
-        return unit.getAllUnitTypes();
-    }
-
-    public List<DetachmentType> getAllDetachmentTypes() {
-        return unit.getAllDetachmentTypes();
     }
 
     public List<Army> addArmy(Army army, String username) {
