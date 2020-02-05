@@ -1,0 +1,294 @@
+div { 
+    text-align:center;
+}
+
+body {
+    color: black;
+    text-align: center;
+    width: 100%;
+}
+
+#detachmentTypeContainer, #mainBuilderWindow, #navigationSquare, #unitTypeContainer {
+    /* border: 2px solid ghostwhite; */
+    border-radius: 25px;
+}
+
+/*Main row styling*/
+#mainRow {
+    height: 50vw;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/*detachment type container*/
+#detachmentTypeContainer {
+    display: flex;
+    flex-direction: column;
+    max-height: 50vw;
+    overflow-y:auto;
+    background-color: rgb(8, 0, 36);
+}
+
+.detachmentTypeCard {
+    margin: 0 auto;
+    width: 80%;
+    height:6vw;
+    color: ghostwhite;
+    font-weight:bold;
+    font-family: "Open Sans", sans-serif;
+    font-size: 1.2rem;
+    background-color: darkslategray;
+    /* border: 2px solid black; */
+    border-radius: 25px;
+}
+
+.title1, .title2 {
+    transition: 0.3s;
+}
+
+.title2 {
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+.detachmentTypeCard:hover .title1 {
+    opacity:0;
+
+}
+
+.detachmentTypeCard:hover .title2 {
+    opacity:1;
+    
+}
+
+/*unit type container*/
+
+#unitTypeContainer {
+    background-color: lightslategrey;
+}
+
+#draggableContainer {
+    display: flex;
+    overflow-x: auto;
+}
+
+/*unit type draggable cards*/
+
+.draggable {
+    height: 6vw;
+    width: 6vw;
+    background-color: orange;
+    color: black;
+    border-radius: 15px;
+    margin: 2%;
+}
+
+.draggable:hover {
+    cursor: grab;
+}
+
+.draggable.ui-draggable-dragging {
+    cursor: grabbing;
+}
+
+/*docked appearance for unit cards*/
+.detachmentUnitDocked {
+    max-height: 6vw;
+    height: 6vw;
+    width: 6vw;
+    background-color: lightslategray;
+    color: black;
+    border-radius: 15px;
+    margin: 2%;
+}
+
+.detachmentUnitDocked>i.fa-edit:hover {
+    color: blue;
+}
+
+.detachmentUnitDocked>i.fa-trash-alt:hover {
+    color: red;
+}
+
+.detachmentUnitDocked>i.fa-trash-alt {
+    visibility: hidden;
+}
+
+/*styling of helper */
+.draggable.ui-draggable-dragging {
+    height: 6vw;
+    width: 6vw; 
+}
+
+.card-body {
+    font-size: 1em;
+}
+
+.card-body>.fa-trash-alt, .card-body>.fa-edit {
+    font-size: 1.2rem;
+}
+
+.card-body>.fa-edit {
+    position: absolute;
+    top: 4%;
+    right: 4%;
+    visibility: hidden;
+}
+
+.card-body>.fa-trash-alt {
+    position: absolute;
+    top: 4%;
+    left: 4%;
+}
+
+.card-body>.unitTypeIcon {
+    position: absolute;
+    display: block;
+    font-size: 2.5rem;
+}
+
+/* .unitTypeCard {
+    max-height: 6vw;
+} */
+
+/*mainBuilderWindow styling*/
+
+#mainBuilderWindow {
+    padding: 0 0;
+}
+
+/*toast styling*/
+
+.toast {
+    color: black;
+    font-weight: bold;
+    font-family: "Nunito", sans-serif;
+    font-size: 2em;
+}
+/*detachment modules*/
+.small .medium .large {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.small>div {
+    width: 90%;
+    height: 45%;
+    margin: 2.5% 2.5%;
+}
+.small>div#detachment0 {
+    margin-bottom: 0;
+}
+.small>div#detachment0 {
+    margin-top: 0;
+}
+
+.medium>div {
+    width: 90%;
+    height: 30%;
+    /* margin: 1.5% 2.5%; */
+}
+
+/* .medium>div#detachment0, .medium>div#detachment1 {
+    margin-bottom: 0;
+}
+.medium>div#detachment2 {
+    margin-top: 0;
+} */
+
+.large {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.large>div {
+    width: 45%;
+    height: 45%;
+    /* margin: 2.5% 2.5%; */
+}
+
+.detachmentModule {
+    /* border: 2px dotted lightgray; */
+    border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: ghostwhite;
+    color: black;
+}
+
+/*detachment unit slot styling*/
+
+.droppable {
+    width: 6vw;
+    height: 6vw;
+    border: 2px solid rgb(0, 132, 255);
+    border-radius: 15px;
+    background-color: lightgray;
+    color: black;
+    font-weight: 500;
+    font-size: 1.5em;
+    font-family: 'Nunito', sans-serif;
+    margin: 2%;
+}
+
+.droppable>p {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+}
+
+#deleteDetachmentButton, #expandDetachmentButton {
+    color: black;
+    font-size: 2.5rem;
+    margin: 3%;
+}
+
+/*row with navSquare and unitType cards*/
+
+#secondRow {
+    position:relative;
+    height: 15vw;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* #navSquare {
+    margin-right: 1vw;
+    margin-top: 1vw;
+} */
+
+#navSquareTop, #navSquareBottom {
+    /* border: 2px solid purple;
+    border-radius: 25px; */
+    height: 50%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    color: ghostwhite;
+}
+
+#navSquareTop>span {
+    font-size: 1.5em;
+}
+
+#navSquareTop:hover {
+    /*make a tooltip pop up with 'click to add a detachment slot"*/
+}
+
+#navSquareBottom>span {
+    font-size: 1.5em;
+}
+
+#mavSquareBottom:hover {
+    /*tooltip with 'drag units to detachment slots*/
+}
+

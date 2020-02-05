@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="/css/landingPage.css">
+</head>
+
+<body>
+
+    <header class="masthead">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12 text-center content">
+                    <h1>Sign Up</h1>
+                    <p class="lead">Join the Fight</p>
+
+                    <h5 th:if="${#request.getParameter('login_error') == '1'}">Wrong Id or Password!</h5>
+    
+                        <form method="POST" action="/signup">
+                            <input type="text" class="form-control" name="username" id="username" placeholder="Username">
+    
+                            <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+    
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success" id="search-button"><i class="fas fa-check"></i></button>
+                                <a role="button" class="btn btn-danger" href="/"><i class="fas fa-times"></i></a>
+                            </div>
+    
+                        </form>
+    
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="/js/jquery-ui.min.js"></script>
+    <script src="https://unpkg.com/popper.js@1.15.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/e3553c8da6.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Navbar Fragment</title>
+</head>
+
+<body>
+
+    <div class="navbarFragment" th:fragment="navbarFragment">
+        <nav class="navbar navbar-expand navbar-light bg-dark">
+            <a class="navbar-brand" href="/home" id="mainLogo"><img
+                    src="http://bakadesign.dk/backoffice/wp-content/uploads/2017/12/imperial-aquila-02.svg"
+                    alt="Imperial Aquila">
+                Army Builder
+            </a>
+
+            <!-- <span th:text="${army.name}" class="navbar-text"></span> -->
+
+            <form class="form-inline ml-auto mr-1" method="POST" action="/logout">
+                <label for="submit">User:&nbsp;<span th:text="${#authentication.name}" class="navbar-text"></span>&nbsp;&nbsp;&nbsp; </label>
+                <button class="btn btn-danger" id="submit" type="submit"><i class="fas fa-user-times"></i>&nbsp;&nbsp;Logout</button>
+            </form>
+
+            <!-- <form class="form-inline" method="POST" action="/logout">
+                <label for="submit">Hello : <span th:text="${#authentication.name}"></span>&nbsp;&nbsp;&nbsp;-old version-</label>
+                    <button class="btn btn-primary" id="submit" type="submit">Logout</button>
+                </form> -->
+
+        </nav>
+    </div>
+
+
+</body>
+
+</html>
