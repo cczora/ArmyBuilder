@@ -16,6 +16,8 @@ import java.util.UUID;
 @RequestMapping("/api")
 public class ArmyController {
 
+    //TODO: add validation for users having access to armies
+
     private final ArmyService service;
 
     @Autowired
@@ -36,7 +38,10 @@ public class ArmyController {
     }
 
     @PostMapping("/addArmy/{username}")
-    public ResponseEntity<List<Army>> addArmy(@PathVariable String username, @RequestBody @Valid Army army, Principal principal) {
+    public ResponseEntity<List<Army>> addArmy(
+            @PathVariable String username,
+            @RequestBody @Valid Army army,
+            Principal principal) {
         if (principal.getName().equals(username)) {
             List<Army> armies = service.addArmy(army, username);
             if (armies != null && armies.size() > 0) {
