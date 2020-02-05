@@ -22,14 +22,8 @@ import java.util.List;
 @NoArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final UserRepository users;
-    private final BCryptPasswordEncoder encoder;
-
-    @Autowired
-    public UserService(UserRepository users, BCryptPasswordEncoder encoder) {
-        this.users = users;
-        this.encoder = encoder;
-    }
+    private UserRepository users;
+    private BCryptPasswordEncoder encoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

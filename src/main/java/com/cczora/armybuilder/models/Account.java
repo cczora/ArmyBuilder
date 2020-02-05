@@ -1,9 +1,6 @@
  package com.cczora.armybuilder.models;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,9 +9,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
  public class Account {
 
     @Id
@@ -29,6 +27,6 @@ import java.util.Objects;
 
     @OneToMany
     @JoinTable(name = "army")
-     List<Army> armies = new ArrayList<>();
+     List<Army> armies;
 
  }

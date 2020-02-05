@@ -11,10 +11,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Builder
 @Getter
 @Setter
 @Table(name = "unit_type")
+@NoArgsConstructor
 public class UnitType implements Serializable {
 
     @Id

@@ -1,8 +1,6 @@
 package com.cczora.armybuilder.models;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,9 +11,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
-@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Detachment implements Serializable {
 
     @Id
@@ -25,15 +24,9 @@ public class Detachment implements Serializable {
     @Column(name = "army_id", nullable = false)
     private UUID armyId;
 
-    @Column(name = "detachment_type_id", nullable = false)
-    private UUID detachmentTypeId;
-
     @ManyToOne
     @JoinColumn(name = "detachment_type_id", nullable = false)
     private DetachmentType detachmentType;
-
-    @Column(name = "faction_type_id", nullable = false)
-    private UUID factionTypeId;
 
     @ManyToOne
     @JoinColumn(name = "faction_type_id", nullable = false)
@@ -47,7 +40,7 @@ public class Detachment implements Serializable {
 
     @OneToMany
     @JoinTable(name = "unit")
-    private List<Unit> units = new ArrayList<>();
+    private List<Unit> units;
 
     public void sortUnits(Detachment detachment) {
                 detachment.units = detachment.units.stream().
@@ -61,8 +54,6 @@ public class Detachment implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Detachment that = (Detachment) o;
         return armyId == that.armyId &&
-                detachmentTypeId == that.detachmentTypeId &&
-                factionTypeId == that.factionTypeId &&
                 Objects.equals(detachmentId, that.detachmentId) &&
                 Objects.equals(detachmentType, that.detachmentType) &&
                 Objects.equals(faction, that.faction) &&
@@ -73,6 +64,6 @@ public class Detachment implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(detachmentId, armyId, detachmentTypeId, detachmentType, factionTypeId, faction, name, notes, units);
+        return Objects.hash(detachmentId, armyId, detachmentType, faction, name, notes, units);
     }
 }

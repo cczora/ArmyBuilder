@@ -1,9 +1,6 @@
 package com.cczora.armybuilder.models;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,9 +11,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Builder
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "faction_type")
 public class FactionType implements Serializable {
 

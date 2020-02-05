@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class ArmyController {
     }
 
     @PostMapping("/addArmy/{username}")
-    public ResponseEntity<List<Army>> addArmy(@PathVariable String username, @RequestBody Army army, Principal principal) {
+    public ResponseEntity<List<Army>> addArmy(@PathVariable String username, @RequestBody @Valid Army army, Principal principal) {
         if (principal.getName().equals(username)) {
             List<Army> armies = service.addArmy(army, username);
             if (armies != null && armies.size() > 0) {
@@ -47,7 +48,7 @@ public class ArmyController {
     }
 
     @PutMapping("/editArmy/{username}/{armyId}")
-    public ResponseEntity<Army> editArmy(@PathVariable String username, @PathVariable UUID armyId, @RequestBody Army army) {
+    public ResponseEntity<Army> editArmy(@PathVariable String username, @PathVariable UUID armyId, @RequestBody @Valid Army army) {
         Army editedArmy = service.editArmy(username, armyId, army);
         return ResponseEntity.ok(editedArmy);
     }

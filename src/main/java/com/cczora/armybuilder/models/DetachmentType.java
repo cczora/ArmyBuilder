@@ -1,8 +1,6 @@
 package com.cczora.armybuilder.models;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,9 +10,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "detachment_type")
 public class DetachmentType {
     @Id

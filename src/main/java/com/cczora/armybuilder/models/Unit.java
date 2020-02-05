@@ -1,29 +1,26 @@
 package com.cczora.armybuilder.models;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Builder
 @Getter
 @Setter
-@RequiredArgsConstructor
-public class Unit {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Unit implements Serializable {
 
     @Id
     private UUID unitId;
 
-    @Column(name = "unit_type_id", nullable = false)
-    private UUID unitTypeId;
-
     @ManyToOne
     @JoinColumn(name = "unit_type_id")
+    @NotNull
     private UnitType unitType;
 
     @Column(nullable = false)
@@ -41,7 +38,6 @@ public class Unit {
         if (o == null || getClass() != o.getClass()) return false;
         Unit unit = (Unit) o;
         return unitId == unit.unitId &&
-                Objects.equals(unitTypeId, unit.unitTypeId) &&
                 Objects.equals(unitType, unit.unitType) &&
                 Objects.equals(name, unit.name) &&
                 Objects.equals(notes, unit.notes) &&
@@ -50,6 +46,6 @@ public class Unit {
 
     @Override
     public int hashCode() {
-        return Objects.hash(unitId, unitTypeId, unitType, name, notes, detachmentId);
+        return Objects.hash(unitId, unitType, name, notes, detachmentId);
     }
 }

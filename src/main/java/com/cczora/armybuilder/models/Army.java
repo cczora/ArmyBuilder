@@ -1,9 +1,6 @@
 package com.cczora.armybuilder.models;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -15,9 +12,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Army implements Serializable {
 
     @Id
@@ -31,12 +29,9 @@ public class Army implements Serializable {
     @Column(nullable = false)
     private String username;
 
-    @NotNull(message = "Faction required.")
-    @Column(name = "faction_type_id", nullable = false)
-    private UUID factionTypeId;
-
     @ManyToOne
     @JoinColumn(name = "faction_type_id", nullable = false)
+    @NotNull(message = "Faction Type required.")
     private FactionType faction;
 
     @Column(name = "command_points")
@@ -48,7 +43,7 @@ public class Army implements Serializable {
 
     @OneToMany
     @JoinTable(name = "detachment")
-    List<Detachment> detachments = new ArrayList<>();
+    List<Detachment> detachments;
 
     @Size(max = 255, message = "You have exceeded the character limit for notes.")
     @Column

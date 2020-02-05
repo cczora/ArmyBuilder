@@ -1,41 +1,51 @@
 package com.cczora.armybuilder.service;
 
+import com.cczora.armybuilder.data.UnitRepository;
+import com.cczora.armybuilder.data.UnitTypeRepository;
 import com.cczora.armybuilder.models.Unit;
 import com.cczora.armybuilder.models.UnitType;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
+@AllArgsConstructor
+@NoArgsConstructor
 public class UnitService {
     
-    private final UnitOfWork unit;
-    
-    @Autowired
-    public UnitService(UnitOfWork unit) {
-        this.unit = unit;
-    }
+    private UnitRepository unitRepo;
+    private UnitTypeRepository unitTypeRepo;
 
     public List<Unit> getUnitsForDetachment(UUID detachmentId) {
-        return unit.getUnitsForDetachment(detachmentId);
+        return unitRepo.findAllByDetachmentId(detachmentId);
     }
 
     public List<UnitType> getAllUnitTypes() {
-        return unit.getAllUnitTypes();
+        return unitTypeRepo.findAll();
     }
 
     public Unit addUnit(Unit unitToAdd, UUID detachmentId, UUID armyId) {
-        return unit.addUnit(unitToAdd, detachmentId, armyId);
+        if(unitToAdd.getUnitId() == null) {
+            unitToAdd.setUnitId(UUID.randomUUID());
+        }
+        unitToAdd.setDetachmentId(detachmentId);
+        unitRepo.save(unitToAdd);
+        return unitToAdd;
     }
 
     public Unit editUnit(UUID unitId, Unit unitToEdit) {
-        return unit.editUnit(unitId, unitToEdit);
+        unitRepo.save(unitToEdit);
+        return unitRepo.findById(unitId).get();
     }
 
     public boolean deleteUnitById(UUID unitId) {
-        return unit.deleteUnitById(unitId);
+        unitRepo.delete(unitRepo.getOne(unitId));
+        return unitRepo.findById(unitId).isEmpty();
     }
     
 }
