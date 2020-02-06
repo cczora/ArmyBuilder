@@ -2,8 +2,8 @@ package com.cczora.armybuilder.service;
 
 import com.cczora.armybuilder.data.UnitRepository;
 import com.cczora.armybuilder.data.UnitTypeRepository;
-import com.cczora.armybuilder.models.Unit;
-import com.cczora.armybuilder.models.UnitType;
+import com.cczora.armybuilder.models.entity.Unit;
+import com.cczora.armybuilder.models.entity.UnitType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,18 +1,17 @@
- package com.cczora.armybuilder.models;
+ package com.cczora.armybuilder.models.entity;
 
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-@Entity
+ @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+ @Builder
  public class Account {
 
     @Id

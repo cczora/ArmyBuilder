@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,17 +26,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //this is necessary in order for http requests to be forwarded correctly to Heroku
                 .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
                 .requiresSecure()
-
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/home", "/api/**")
-                .authenticated()
-//                //for swagger to be authenticated
-//                .antMatchers("/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
-//                .permitAll()
-//                .anyRequest().authenticated()
-
+                .antMatchers("/v3/api-docs", //allows swagger to access without spring security enabled
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**").permitAll()
+//                .antMatchers("/home", "/api/**").authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")

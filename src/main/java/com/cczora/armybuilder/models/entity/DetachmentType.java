@@ -1,4 +1,4 @@
-package com.cczora.armybuilder.models;
+package com.cczora.armybuilder.models.entity;
 
 import lombok.*;
 
@@ -6,23 +6,23 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "unit_type")
 @NoArgsConstructor
-public class UnitType implements Serializable {
-
+@AllArgsConstructor
+@Table(name = "detachment_type")
+public class DetachmentType {
     @Id
-    private UUID unitTypeId;
+    @Column(name = "detachment_type_id")
+    private UUID detachmentTypeId;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "power_points", nullable = false)
-    private int powerPoints;
+    @Column(name = "command_pts", nullable = false)
+    private int commandPoints;
 }

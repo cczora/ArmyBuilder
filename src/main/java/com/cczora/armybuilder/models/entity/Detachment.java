@@ -1,10 +1,9 @@
-package com.cczora.armybuilder.models;
+package com.cczora.armybuilder.models.entity;
 
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -21,8 +20,9 @@ public class Detachment implements Serializable {
     @Column(name = "detachment_id")
     private UUID detachmentId;
 
-    @Column(name = "army_id", nullable = false)
-    private UUID armyId;
+    @ManyToOne
+    @JoinColumn(name = "army_id")
+    private Army army;
 
     @ManyToOne
     @JoinColumn(name = "detachment_type_id", nullable = false)
@@ -53,7 +53,7 @@ public class Detachment implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Detachment that = (Detachment) o;
-        return armyId == that.armyId &&
+        return  Objects.equals(army, that.army) &&
                 Objects.equals(detachmentId, that.detachmentId) &&
                 Objects.equals(detachmentType, that.detachmentType) &&
                 Objects.equals(faction, that.faction) &&
@@ -64,6 +64,6 @@ public class Detachment implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(detachmentId, armyId, detachmentType, faction, name, notes, units);
+        return Objects.hash(detachmentId, detachmentType, faction, name, notes, units);
     }
 }

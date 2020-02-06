@@ -1,7 +1,7 @@
 package com.cczora.armybuilder.controller;
 
-import com.cczora.armybuilder.models.Detachment;
-import com.cczora.armybuilder.models.DetachmentType;
+import com.cczora.armybuilder.models.entity.Detachment;
+import com.cczora.armybuilder.models.entity.DetachmentType;
 import com.cczora.armybuilder.service.DetachmentService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;

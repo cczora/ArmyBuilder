@@ -1,9 +1,11 @@
 package com.cczora.armybuilder.data;
 
-import com.cczora.armybuilder.models.UnitType;
+import com.cczora.armybuilder.models.entity.UnitType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-public abstract class UnitTypeRepository implements JpaRepository<UnitType, UUID> {
+@Repository
+public interface UnitTypeRepository extends JpaRepository<UnitType, UUID> {
 }

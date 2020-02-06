@@ -1,7 +1,7 @@
 package com.cczora.armybuilder.controller;
 
-import com.cczora.armybuilder.models.Unit;
-import com.cczora.armybuilder.models.UnitType;
+import com.cczora.armybuilder.models.entity.Unit;
+import com.cczora.armybuilder.models.entity.UnitType;
 import com.cczora.armybuilder.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

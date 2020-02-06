@@ -1,15 +1,18 @@
 package com.cczora.armybuilder.data;
 
-import com.cczora.armybuilder.models.Army;
+import com.cczora.armybuilder.models.entity.Army;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
-public abstract class ArmyRepository implements JpaRepository<Army, UUID> {
+@Repository
+public interface ArmyRepository extends JpaRepository<Army, UUID> {
 
-    public abstract List<Army> findArmiesByUsername(String username);
+    @Query(value = "select * from army a where a.username = :username", nativeQuery = true)
+    List<Army> findAllByUsername(@Param(value = "username") String username);
 
 }

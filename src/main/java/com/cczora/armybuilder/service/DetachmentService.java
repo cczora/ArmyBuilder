@@ -2,15 +2,11 @@ package com.cczora.armybuilder.service;
 
 import com.cczora.armybuilder.data.DetachmentRepository;
 import com.cczora.armybuilder.data.DetachmentTypeRepository;
-import com.cczora.armybuilder.models.Army;
-import com.cczora.armybuilder.models.Detachment;
-import com.cczora.armybuilder.models.DetachmentType;
+import com.cczora.armybuilder.models.entity.Detachment;
+import com.cczora.armybuilder.models.entity.DetachmentType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

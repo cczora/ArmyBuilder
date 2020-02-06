@@ -1,4 +1,4 @@
-package com.cczora.armybuilder.models;
+package com.cczora.armybuilder.models.entity;
 
 import lombok.*;
 

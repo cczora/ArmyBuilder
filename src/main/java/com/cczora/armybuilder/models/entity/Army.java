@@ -1,6 +1,8 @@
-package com.cczora.armybuilder.models;
+package com.cczora.armybuilder.models.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -16,36 +18,33 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Army implements Serializable {
+@Builder
+@Table(name = "army", schema = "public")
+public class Army {
 
     @Id
-    private UUID armyId;
+    private UUID army_id;
 
-    @NotBlank(message = "Name required.")
-    @Size(max = 50, message = "Name too long.")
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String username;
+    @ManyToOne
+    @JoinColumn(name = "username")
+    private Account user;
 
     @ManyToOne
     @JoinColumn(name = "faction_type_id", nullable = false)
-    @NotNull(message = "Faction Type required.")
     private FactionType faction;
 
     @Column(name = "command_points")
-    private int commandPoints;
+    @Builder.Default
+    private int commandPoints = 3;
 
-    @NotNull(message = "Size class required.")
     @Column(name = "size", nullable = false)
     private String sizeClass;
 
-    @OneToMany
-    @JoinTable(name = "detachment")
-    List<Detachment> detachments;
-
-    @Size(max = 255, message = "You have exceeded the character limit for notes.")
     @Column
     private String notes;
+
+    //TODO: add create/modify date to entities
 }
