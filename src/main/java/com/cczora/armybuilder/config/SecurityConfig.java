@@ -29,7 +29,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/home", "/api/**").authenticated()
+                .antMatchers("/home", "/api/**")
+                .authenticated()
+//                //for swagger to be authenticated
+//                .antMatchers("/v3/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
+//                .permitAll()
+//                .anyRequest().authenticated()
+
                 .and()
                 .formLogin()
                 .loginPage("/login")
