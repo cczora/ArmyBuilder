@@ -2,7 +2,10 @@ package com.cczora.armybuilder.service;
 
 import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
-import com.cczora.armybuilder.models.entity.*;
+import com.cczora.armybuilder.models.entity.Army;
+import com.cczora.armybuilder.models.entity.Detachment;
+import com.cczora.armybuilder.models.entity.FactionType;
+import com.cczora.armybuilder.models.entity.Unit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -39,8 +43,11 @@ public class ArmyService {
         return armyRepo.findById(armyId).isPresent() ? armyRepo.findById(armyId).get() : new Army();
     }
 
-    public List<Army> getArmiesByUsername(String username) {
-        return armyRepo.findAllByUsername(username);
+    public List<ArmyDTO> getArmiesByUsername(String username) {
+        //todo: refactor this once it works
+        List<Army> armies = armyRepo.findAllByUsername(username);
+        List<ArmyDTO> dtos = armies.stream().map(this::mapArmyToArmyDTO).collect(Collectors.toList());
+        return dtos;
     }
 
     public List<Army> addArmy(ArmyDTO army, String username) throws Exception {
@@ -51,7 +58,7 @@ public class ArmyService {
                     .army_id(UUID.randomUUID())
                     .name(army.getName())
                     .faction(faction)
-                    .user(userRepo.findByUsername(username))
+                    .username(username)
                     .sizeClass(army.getSizeClass())
                     .notes(army.getNotes())
                     .build());
@@ -88,5 +95,19 @@ public class ArmyService {
         armyRepo.save(army);
         return armyRepo.findById(armyId).isPresent() ? armyRepo.findById(armyId).get(): new Army();
     }
+
+    //region private methods
+
+    private ArmyDTO mapArmyToArmyDTO(Army a) { //TODO: look into using Mapstruct for simple mapping like this one
+        return ArmyDTO.builder()
+                .commandPoints(a.getCommandPoints())
+                .factionName(a.getFaction().getName())
+                .name(a.getName())
+                .notes(a.getNotes())
+                .sizeClass(a.getSizeClass())
+                .build();
+    }
+
+    //endregion
 
 }

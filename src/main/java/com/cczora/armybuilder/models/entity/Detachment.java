@@ -1,13 +1,15 @@
 package com.cczora.armybuilder.models.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -20,9 +22,8 @@ public class Detachment implements Serializable {
     @Column(name = "detachment_id")
     private UUID detachmentId;
 
-    @ManyToOne
-    @JoinColumn(name = "army_id")
-    private Army army;
+    @Column(name = "army_id")
+    private UUID armyId;
 
     @ManyToOne
     @JoinColumn(name = "detachment_type_id", nullable = false)
@@ -42,18 +43,12 @@ public class Detachment implements Serializable {
     @JoinTable(name = "unit")
     private List<Unit> units;
 
-    public void sortUnits(Detachment detachment) {
-                detachment.units = detachment.units.stream().
-                        sorted()
-                        .collect(Collectors.toList());
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Detachment that = (Detachment) o;
-        return  Objects.equals(army, that.army) &&
+        return armyId.equals(that.armyId) &&
                 Objects.equals(detachmentId, that.detachmentId) &&
                 Objects.equals(detachmentType, that.detachmentType) &&
                 Objects.equals(faction, that.faction) &&
@@ -64,6 +59,6 @@ public class Detachment implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(detachmentId, detachmentType, faction, name, notes, units);
+        return Objects.hash(detachmentId, armyId, detachmentType, faction, name, notes, units);
     }
 }

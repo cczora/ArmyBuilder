@@ -28,9 +28,8 @@ public class Army {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "username")
-    private Account user;
+    @Column(nullable = false)
+    private String username;
 
     @ManyToOne
     @JoinColumn(name = "faction_type_id", nullable = false)

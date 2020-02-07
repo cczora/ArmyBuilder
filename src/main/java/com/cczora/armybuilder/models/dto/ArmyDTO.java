@@ -1,5 +1,6 @@
 package com.cczora.armybuilder.models.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -8,6 +9,7 @@ import javax.validation.constraints.Size;
 
 //class for army details without detailed detachment/unit info
 @Data
+@Builder
 public class ArmyDTO {
 
     @NotBlank(message = "Name required.")

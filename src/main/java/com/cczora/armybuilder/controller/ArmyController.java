@@ -1,10 +1,10 @@
 package com.cczora.armybuilder.controller;
 
+import com.cczora.armybuilder.config.AuthorizationService;
 import com.cczora.armybuilder.config.AuthorizationServiceImpl;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.entity.Army;
 import com.cczora.armybuilder.service.ArmyService;
-import com.cczora.armybuilder.config.AuthorizationService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,14 +32,10 @@ public class ArmyController {
 
     @Operation(description = "Get all armies for a given username")
     @GetMapping("/armies/{username}")
-    public ResponseEntity<List<Army>> getArmiesByUsername(@PathVariable String username, Principal principal) {
+    public ResponseEntity<List<ArmyDTO>> getArmiesByUsername(@PathVariable String username, Principal principal) {
         //TODO: use auth service here
         if (principal.getName().equals(username)) {
-            List<Army> armies = service.getArmiesByUsername(username);
-            if (armies != null && armies.size() > 0) {
-                return ResponseEntity.status(HttpStatus.OK).body(armies);
-            }
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(HttpStatus.OK).body(service.getArmiesByUsername(username));
         }
         return new ResponseEntity(HttpStatus.FORBIDDEN);
     }
