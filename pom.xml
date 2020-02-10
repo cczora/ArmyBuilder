@@ -92,7 +92,7 @@
 				<configuration>
 					<appName>armybuilder</appName>
 					<processTypes>
-						<web>java $JAVA_OPTS -cp target/classes:target/dependency/* com.cczora.armybuilder.ArmybuilderApplication</web>
+						<web>bin/start-pgbouncer java $JAVA_OPTS -cp target/classes:target/dependency/* com.cczora.armybuilder.ArmybuilderApplication</web>
 					</processTypes>
 				</configuration>
 			</plugin>
