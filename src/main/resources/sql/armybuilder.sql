@@ -2,81 +2,120 @@ drop schema if exists public cascade;
 create schema public;
 
 create table unit_type(
-	unit_type_id uuid primary key not null,
-    name varchar(20) not null,
-	power_points int not null
+                          unit_type_id uuid primary key not null,
+                          name varchar(20) not null,
+                          power_points int not null
 );
 
 create table faction_type(
-	faction_type_id uuid primary key not null,
-    name varchar(50) not null
+                             faction_type_id uuid primary key not null,
+                             name varchar(50) not null
 );
 
 create table detachment_type(
-	detachment_type_id uuid primary key not null,
-    name varchar(50) not null,
-    command_pts int not null
+                                detachment_type_id uuid primary key not null,
+                                name varchar(50) not null,
+                                command_pts int not null
 );
 
 create table account(
-	username varchar primary key not null,
-    password varchar(100) not null,
-    profile_pic_url varchar(100)
+                        username varchar primary key not null,
+                        password varchar(100) not null,
+                        profile_pic_url varchar(100)
 );
 
 create table army(
-	army_id uuid primary key not null,
-    name varchar(50) not null,
-    notes varchar(255),
-    command_points int not null,
-    size varchar(10) not null,
+                     army_id uuid primary key not null,
+                     name varchar(50) not null,
+                     notes varchar(255),
+                     command_points int not null,
+                     size varchar(10) not null,
 
-    username varchar not null,
-    constraint username
-		foreign key (username)
-        references account(username),
+                     username varchar not null,
+                     constraint username
+                         foreign key (username)
+                             references account(username),
 
-    faction_type_id uuid not null,
-    constraint afaction_type_id
-		foreign key (faction_type_id)
-        references faction_type(faction_type_id)
+                     faction_type_id uuid not null,
+                     constraint afaction_type_id
+                         foreign key (faction_type_id)
+                             references faction_type(faction_type_id)
 );
+
+create table army_fields(
+                            name varchar primary key not null,
+                            patchEnabled boolean not null
+);
+
+insert into army_fields(name, patchEnabled) values
+('army_id', false),
+('name', true),
+('notes', true),
+('command_points', false),
+('size', true),
+('username', false),
+('faction_type_id', true);
 
 create table detachment(
-	detachment_id uuid primary key not null,
+                           detachment_id uuid primary key not null,
 
-    army_id uuid not null,
-    constraint army_id
-		foreign key (army_id)
-        references army(army_id),
+                           army_id uuid not null,
+                           constraint army_id
+                               foreign key (army_id)
+                                   references army(army_id),
 
-	detachment_type_id uuid not null,
-    constraint detachment_type_id
-		foreign key (detachment_type_id)
-        references detachment_type(detachment_type_id),
+                           detachment_type_id uuid not null,
+                           constraint detachment_type_id
+                               foreign key (detachment_type_id)
+                                   references detachment_type(detachment_type_id),
 
-	faction_type_id uuid not null,
-    constraint dfaction_type_id
-		foreign key (faction_type_id)
-        references faction_type(faction_type_id),
+                           faction_type_id uuid not null,
+                           constraint dfaction_type_id
+                               foreign key (faction_type_id)
+                                   references faction_type(faction_type_id),
 
-    name varchar(25) not null,
-    notes varchar(255)
+                           name varchar(25) not null,
+                           notes varchar(255)
 );
+
+create table detachment_fields(
+                                  name varchar primary key not null,
+                                  patchEnabled boolean not null
+);
+
+insert into detachment_fields(name, patchEnabled) values
+('detachment_id', false),
+('army_id', false),
+('detachment_type_id', true),
+('faction_type_id', true),
+('name', true),
+('notes', true);
 
 create table unit(
-	unitId uuid primary key not null,
-    detachment_id uuid not null,
-    constraint detachment_id
-		foreign key (detachment_id)
-        references detachment(detachment_id),
-    unit_type_id uuid not null,
-    constraint unit_type_id
-		foreign key (unit_type_id)
-        references unit_type(unit_type_id),
-	name varchar(50) not null,
-    notes varchar(255)
+                     unit_id uuid primary key not null,
+                     detachment_id uuid not null,
+                     constraint detachment_id
+                         foreign key (detachment_id)
+                             references detachment(detachment_id),
+                     unit_type_id uuid not null,
+                     constraint unit_type_id
+                         foreign key (unit_type_id)
+                             references unit_type(unit_type_id),
+                     name varchar(50) not null,
+                     notes varchar(255)
 );
+
+create table unit_fields(
+                            name varchar primary key not null,
+                            patchEnabled boolean not null
+);
+
+insert into unit_fields(name, patchEnabled) values
+('unit_id', false),
+('detachment_id', false),
+('unit_type_id', true),
+('name', true),
+('notes', true);
 
 insert into unit_type(unit_type_id, name, power_points) values
 (cast('fc1fa72b-c5b5-4dc9-84f6-8e53ee267122' as uuid), 'HQ', 10),

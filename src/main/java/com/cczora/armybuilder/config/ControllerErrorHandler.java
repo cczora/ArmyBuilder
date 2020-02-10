@@ -1,6 +1,5 @@
 package com.cczora.armybuilder.config;
 
-import com.cczora.armybuilder.config.exception.DuplicateUsernameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,6 +35,16 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(
                 Error.builder()
                         .message(USER_NOT_FOUND + ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build(),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NoSuchFieldException.class)
+    public final ResponseEntity<Error> handleNoSuchFieldException(NoSuchFieldException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                Error.builder()
+                        .message(ex.getMessage())
                         .timestamp(LocalDateTime.now())
                         .build(),
                 HttpStatus.NOT_FOUND);

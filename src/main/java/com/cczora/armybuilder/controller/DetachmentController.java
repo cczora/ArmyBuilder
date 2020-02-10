@@ -1,5 +1,6 @@
 package com.cczora.armybuilder.controller;
 
+import com.cczora.armybuilder.config.AppConstants;
 import com.cczora.armybuilder.models.entity.Detachment;
 import com.cczora.armybuilder.models.entity.DetachmentType;
 import com.cczora.armybuilder.service.DetachmentService;
@@ -14,12 +15,11 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(AppConstants.basePath)
 @Slf4j
 public class DetachmentController {
 
     private final DetachmentService service;
-    private final Logger log = LoggerFactory.getLogger(DetachmentController.class);
 
     @Autowired
     public DetachmentController(DetachmentService service) {

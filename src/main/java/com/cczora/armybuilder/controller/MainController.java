@@ -59,6 +59,7 @@ public class MainController {
         }
         model.addAttribute("username", principal.getName());
         model.addAttribute("factions", armyService.getAllFactions());
+        model.addAttribute("armies", armyService.getArmiesByUsername(principal.getName()));
         return "armyHome";
     }
 

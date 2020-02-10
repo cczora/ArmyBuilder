@@ -17,8 +17,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UnitType implements Serializable {
 
+    private static final long serialVersionUID = -8952298989988435673L;
     @Id
-    private UUID unitTypeId;
+    private UUID unit_type_id;
 
     @Column(nullable = false)
     private String name;

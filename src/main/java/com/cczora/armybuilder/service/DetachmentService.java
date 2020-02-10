@@ -7,6 +7,7 @@ import com.cczora.armybuilder.models.entity.DetachmentType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,12 +16,17 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 @NoArgsConstructor
 public class DetachmentService {
 
     private DetachmentRepository detachmentRepository;
     private DetachmentTypeRepository detachmentTypeRepository;
+
+    @Autowired
+    public DetachmentService(DetachmentRepository detachmentRepository, DetachmentTypeRepository detachmentTypeRepository) {
+        this.detachmentRepository = detachmentRepository;
+        this.detachmentTypeRepository = detachmentTypeRepository;
+    }
 
     public List<DetachmentType> getAllDetachmentTypes() {
         return detachmentTypeRepository.findAll();

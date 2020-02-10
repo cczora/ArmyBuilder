@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8">
@@ -21,7 +21,7 @@
             <!-- <span th:text="${army.name}" class="navbar-text"></span> -->
 
             <form class="form-inline ml-auto mr-1" method="POST" action="/logout">
-                <label for="submit">User:&nbsp;<span th:text="${#authentication.name}" class="navbar-text"></span>&nbsp;&nbsp;&nbsp; </label>
+                <label for="submit">User:&nbsp;<span th:text="${username}">Bob</span>&nbsp;&nbsp;&nbsp; </label>
                 <button class="btn btn-danger" id="submit" type="submit"><i class="fas fa-user-times"></i>&nbsp;&nbsp;Logout</button>
             </form>
 

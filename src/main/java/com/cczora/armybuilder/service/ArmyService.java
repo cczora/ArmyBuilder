@@ -2,18 +2,19 @@ package com.cczora.armybuilder.service;
 
 import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
-import com.cczora.armybuilder.models.entity.Army;
-import com.cczora.armybuilder.models.entity.Detachment;
-import com.cczora.armybuilder.models.entity.FactionType;
-import com.cczora.armybuilder.models.entity.Unit;
+import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
+import com.cczora.armybuilder.models.dto.KeyValuePair;
+import com.cczora.armybuilder.models.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -21,15 +22,17 @@ public class ArmyService {
 
     private final UserRepository userRepo;
     private final ArmyRepository armyRepo;
+    private final ArmyFieldRepository armyFieldsRepo;
     private final FactionTypeRepository factionRepo;
     private final DetachmentRepository detachmentRepo;
     private final UnitRepository unitRepo;
 
     @Autowired
-    public ArmyService(UserRepository userRepo, ArmyRepository armyRepo, FactionTypeRepository factionRepo,
+    public ArmyService(UserRepository userRepo, ArmyRepository armyRepo, ArmyFieldRepository armyFieldsRepo, FactionTypeRepository factionRepo,
                        DetachmentRepository detachmentRepo, UnitRepository unitRepo) {
         this.userRepo = userRepo;
         this.armyRepo = armyRepo;
+        this.armyFieldsRepo = armyFieldsRepo;
         this.factionRepo = factionRepo;
         this.detachmentRepo = detachmentRepo;
         this.unitRepo = unitRepo;
@@ -44,13 +47,11 @@ public class ArmyService {
     }
 
     public List<ArmyDTO> getArmiesByUsername(String username) {
-        //todo: refactor this once it works
         List<Army> armies = armyRepo.findAllByUsername(username);
-        List<ArmyDTO> dtos = armies.stream().map(this::mapArmyToArmyDTO).collect(Collectors.toList());
-        return dtos;
+        return armies.stream().map(this::mapArmyToArmyDTO).collect(Collectors.toList());
     }
 
-    public List<Army> addArmy(ArmyDTO army, String username) throws Exception {
+    public List<ArmyDTO> addArmy(ArmyDTO army, String username) throws Exception {
         try {
             log.debug("Adding army {} for user {}", army.getName(), username);
             FactionType faction = factionRepo.findFactionTypeByName(army.getFactionName());
@@ -62,7 +63,9 @@ public class ArmyService {
                     .sizeClass(army.getSizeClass())
                     .notes(army.getNotes())
                     .build());
-            return armyRepo.findAllByUsername(username);
+            return armyRepo.findAllByUsername(username).stream()
+                    .map(this::mapArmyToArmyDTO)
+                    .collect(Collectors.toList());
         }
         catch(Exception e) {
             log.error("Error adding army {}: {}", army.getName(), e);
@@ -74,7 +77,6 @@ public class ArmyService {
     public void deleteArmyById(UUID id) throws Exception {
         log.debug("Deleting army {}", id);
         try {
-            armyRepo.deleteById(id);
             //TODO: add SQl triggers to delete detachments and units for armies instead of relying on repos
             List<Detachment> detachments = detachmentRepo.findAllByArmyId(id);
             detachmentRepo.deleteAll(detachments);
@@ -83,6 +85,7 @@ public class ArmyService {
                 List<Unit> units = unitRepo.findAllByDetachmentId(d.getDetachmentId());
                 unitRepo.deleteAll(units);
             }
+            armyRepo.deleteById(id);
             log.debug("Successfully deleted army {}", id);
         }
         catch(Exception e) {
@@ -91,15 +94,71 @@ public class ArmyService {
         }
     }
 
-    public Army editArmy(String username, UUID armyId, Army army) {
-        armyRepo.save(army);
-        return armyRepo.findById(armyId).isPresent() ? armyRepo.findById(armyId).get(): new Army();
+    public ArmyDTO editArmy(ArmyPatchRequestDTO armyUpdates) throws Exception {
+        List<String> updateFields = StreamSupport.stream(armyFieldsRepo.findAll().spliterator(), false)
+                .filter(ArmyField::isPatchEnabled)
+                .map(ArmyField::getName)
+                .collect(Collectors.toList());
+        Map<String, Object> updates = armyUpdates.getUpdates().stream()
+                .collect(Collectors.toMap(KeyValuePair::getKey, KeyValuePair::getValue));
+        for(String updateField : updates.keySet()) {
+            if(!updateFields.contains(updateField)) {
+                log.error("Invalid field {}", updateField);
+                throw new NoSuchFieldException(String.format("Field %s is not allowed to be updated. Supported fields are %s.", updateField, updateFields.toString()));
+            }
+        }
+        try {
+            Army currentArmy = armyRepo.findById(armyUpdates.getArmyId()).get();
+            for(String field : updates.keySet()) {
+                switch(field) {
+                    case "name":
+                        String newName = updates.get(field).toString();
+                        if(!currentArmy.getName().equals(newName)) {
+                            currentArmy.setName(newName);
+                        }
+                        break;
+                    case "faction":
+                        String newFaction = updates.get(field).toString();
+                        if(!currentArmy.getFaction().getName().equals(newFaction)) {
+                            currentArmy.setFaction(factionRepo.findFactionTypeByName(newFaction));
+                        }
+                        break;
+                    case "commandPoints":
+                        int newCP = Integer.parseInt(updates.get(field).toString());
+                        if(currentArmy.getCommandPoints() != newCP) {
+                            currentArmy.setCommandPoints(newCP);
+                        }
+                        break;
+                    case "sizeClass":
+                        String newSize = updates.get(field).toString();
+                        if(!currentArmy.getSizeClass().equals(newSize)) {
+                            currentArmy.setSizeClass(newSize);
+                        }
+                        break;
+                    case "notes":
+                        String newNotes = updates.get(field).toString();
+                        if(!currentArmy.getNotes().equals(newNotes)) {
+                            currentArmy.setNotes(newNotes);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            armyRepo.save(currentArmy);
+            return mapArmyToArmyDTO(currentArmy);
+        }
+        catch(Exception e) {
+            log.error("Error editing armyUpdates {}: {}", armyUpdates.getArmyId(), e.getMessage());
+            throw new Exception(e);
+        }
     }
 
     //region private methods
 
     private ArmyDTO mapArmyToArmyDTO(Army a) { //TODO: look into using Mapstruct for simple mapping like this one
         return ArmyDTO.builder()
+                .armyId(a.getArmy_id())
                 .commandPoints(a.getCommandPoints())
                 .factionName(a.getFaction().getName())
                 .name(a.getName())

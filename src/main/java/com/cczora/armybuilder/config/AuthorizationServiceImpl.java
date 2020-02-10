@@ -23,6 +23,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public void validatePrincipalUser(Principal principle, String username) throws ValidationException {
+        //TODO: this will need to be changed once JWT is introduced
         Optional<Account> user = userRepo.findById(username);
         if(user.isPresent() && !principle.getName().equals(username)) {
             log.error("User {} is not allowed to access armies for {}", principle.getName(), username);

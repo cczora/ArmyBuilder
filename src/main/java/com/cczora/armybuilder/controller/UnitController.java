@@ -1,5 +1,6 @@
 package com.cczora.armybuilder.controller;
 
+import com.cczora.armybuilder.config.AppConstants;
 import com.cczora.armybuilder.models.entity.Unit;
 import com.cczora.armybuilder.models.entity.UnitType;
 import com.cczora.armybuilder.service.UnitService;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(AppConstants.basePath)
 public class UnitController {
 
     private final UnitService service;
@@ -23,7 +24,7 @@ public class UnitController {
     }
 
     @GetMapping("/units/{armyId}/{detachmentId}")
-    public ResponseEntity<List<Unit>> getUnitsForDetachment(@PathVariable UUID detachmentId) {
+    public ResponseEntity<List<Unit>> getUnitsForDetachment(@PathVariable UUID armyId, @PathVariable UUID detachmentId) {
         List<Unit> units = service.getUnitsForDetachment(detachmentId);
         return ResponseEntity.ok(units);
     }

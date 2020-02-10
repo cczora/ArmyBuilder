@@ -72,6 +72,11 @@
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.2.30</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-maven-plugin</artifactId>
+			<version>0.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

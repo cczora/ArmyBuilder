@@ -6,11 +6,14 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.UUID;
 
 //class for army details without detailed detachment/unit info
 @Data
 @Builder
 public class ArmyDTO {
+
+    private UUID armyId;
 
     @NotBlank(message = "Name required.")
     @Size(max = 50, message = "Name too long.")
