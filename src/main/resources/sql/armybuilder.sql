@@ -54,7 +54,7 @@ insert into army_fields(name, patchEnabled) values
 create table detachment(
                            detachment_id uuid primary key not null,
 
-                           army_id uuid not null references army(army_id),
+                           army_id uuid not null references army(army_id) on delete cascade,
 
                            detachment_type_id uuid not null references detachment_type(detachment_type_id),
 
@@ -79,7 +79,7 @@ insert into detachment_fields(name, patchEnabled) values
 
 create table unit(
                      unit_id uuid primary key not null,
-                     detachment_id uuid not null references detachment(detachment_id),
+                     detachment_id uuid not null references detachment(detachment_id) on delete cascade,
                      unit_type_id uuid not null references unit_type(unit_type_id),
                      name varchar(50) not null,
                      notes varchar(255)
