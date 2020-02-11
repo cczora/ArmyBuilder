@@ -22,7 +22,8 @@ public class ArmyDTO {
     @NotNull(message = "Faction required.")
     private String factionName;
 
-    private int commandPoints;
+    @Builder.Default
+    private int commandPoints = 3;
 
     @NotNull(message = "Size class required.")
     private String sizeClass;

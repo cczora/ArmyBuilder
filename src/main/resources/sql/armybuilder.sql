@@ -31,15 +31,10 @@ create table army(
                      command_points int not null,
                      size varchar(10) not null,
 
-                     username varchar not null,
-                     constraint username
-                         foreign key (username)
-                             references account(username),
+                     username varchar not null references account(username),
 
-                     faction_type_id uuid not null,
-                     constraint afaction_type_id
-                         foreign key (faction_type_id)
-                             references faction_type(faction_type_id)
+                     faction_type_id uuid not null references faction_type(faction_type_id)
+
 );
 
 create table army_fields(
@@ -59,20 +54,11 @@ insert into army_fields(name, patchEnabled) values
 create table detachment(
                            detachment_id uuid primary key not null,
 
-                           army_id uuid not null,
-                           constraint army_id
-                               foreign key (army_id)
-                                   references army(army_id),
+                           army_id uuid not null references army(army_id),
 
-                           detachment_type_id uuid not null,
-                           constraint detachment_type_id
-                               foreign key (detachment_type_id)
-                                   references detachment_type(detachment_type_id),
+                           detachment_type_id uuid not null references detachment_type(detachment_type_id),
 
-                           faction_type_id uuid not null,
-                           constraint dfaction_type_id
-                               foreign key (faction_type_id)
-                                   references faction_type(faction_type_id),
+                           faction_type_id uuid not null references faction_type(faction_type_id),
 
                            name varchar(25) not null,
                            notes varchar(255)
@@ -93,14 +79,8 @@ insert into detachment_fields(name, patchEnabled) values
 
 create table unit(
                      unit_id uuid primary key not null,
-                     detachment_id uuid not null,
-                     constraint detachment_id
-                         foreign key (detachment_id)
-                             references detachment(detachment_id),
-                     unit_type_id uuid not null,
-                     constraint unit_type_id
-                         foreign key (unit_type_id)
-                             references unit_type(unit_type_id),
+                     detachment_id uuid not null references detachment(detachment_id),
+                     unit_type_id uuid not null references unit_type(unit_type_id),
                      name varchar(50) not null,
                      notes varchar(255)
 );

@@ -43,41 +43,37 @@ public class ArmyController {
 
     @Operation(description = "Adds an army to the given user's list of armies")
     @PostMapping("/{username}")
-    public ResponseEntity<ArmyDTO> addArmy(
+    public ResponseEntity<?> addArmy(
             @PathVariable String username,
             @RequestBody @Valid ArmyDTO army,
             Principal principal) throws Exception {
         if(principal != null) {
             authorizationService.validatePrincipalUser(principal, username);
         }
-        List<ArmyDTO> armies = service.addArmy(army, username);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                armies.stream()
-                        .filter(a -> a.getName().equals(army.getName()))
-                        .findFirst()
-                        .get());
+        service.addArmy(army, username);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(description = "Edits an army by username ")
     @PatchMapping("/{username}")
-    public ResponseEntity<ArmyDTO> editArmy(@PathVariable String username,
+    public ResponseEntity<?> editArmy(@PathVariable String username,
                                             @RequestBody ArmyPatchRequestDTO army,
                                             Principal principal) throws Exception {
         if(principal != null) {
             authorizationService.validatePrincipalUser(principal, username);
         }
-        ArmyDTO editedArmy = service.editArmy(army);
-        return ResponseEntity.ok(editedArmy);
+        service.editArmy(army);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(description = "Deletes an army ")
     @DeleteMapping("/{username}/{armyId}")
-    public ResponseEntity deleteArmy(@PathVariable String username, @PathVariable UUID armyId, Principal principal) throws Exception {
+    public ResponseEntity<?> deleteArmy(@PathVariable String username, @PathVariable UUID armyId, Principal principal) throws Exception {
         if(principal != null) {
             authorizationService.validatePrincipalUser(principal, username);
         }
         service.deleteArmyById(armyId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

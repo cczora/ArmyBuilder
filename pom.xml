@@ -77,6 +77,12 @@
 			<artifactId>springdoc-openapi-maven-plugin</artifactId>
 			<version>0.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>1.0.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -92,7 +98,7 @@
 				<configuration>
 					<appName>armybuilder</appName>
 					<processTypes>
-						<web>bin/start-pgbouncer java $JAVA_OPTS -cp target/classes:target/dependency/* com.cczora.armybuilder.ArmybuilderApplication</web>
+						<web>bin/start-pgbouncer java -Dspring.datasource.url -cp target/classes:target/dependency/* com.cczora.armybuilder.ArmybuilderApplication</web>
 					</processTypes>
 				</configuration>
 			</plugin>
