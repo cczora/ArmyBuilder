@@ -15,4 +15,6 @@ public interface ArmyRepository extends JpaRepository<Army, UUID> {
     @Query(value = "select * from army a where a.username = :username", nativeQuery = true)
     List<Army> findAllByUsername(@Param(value = "username") String username);
 
+    void deleteArmiesByUsername(String username);
+
 }

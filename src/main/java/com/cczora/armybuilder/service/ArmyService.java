@@ -51,21 +51,20 @@ public class ArmyService {
         return armies.stream().map(this::mapArmyToArmyDTO).collect(Collectors.toList());
     }
 
-    public List<ArmyDTO> addArmy(ArmyDTO army, String username) throws Exception {
+    public ArmyDTO addArmy(ArmyDTO army, String username) throws Exception {
         try {
             log.debug("Adding army {} for user {}", army.getName(), username);
             FactionType faction = factionRepo.findFactionTypeByName(army.getFactionName());
-            armyRepo.save(Army.builder()
+            Army armyEntity = Army.builder()
                     .army_id(UUID.randomUUID())
                     .name(army.getName())
                     .faction(faction)
                     .username(username)
                     .sizeClass(army.getSizeClass())
                     .notes(army.getNotes())
-                    .build());
-            return armyRepo.findAllByUsername(username).stream()
-                    .map(this::mapArmyToArmyDTO)
-                    .collect(Collectors.toList());
+                    .build();
+            armyEntity = armyRepo.save(armyEntity);
+            return mapArmyToArmyDTO(armyEntity);
         }
         catch(Exception e) {
             log.error("Error adding army {}: {}", army.getName(), e);
@@ -94,7 +93,7 @@ public class ArmyService {
         }
     }
 
-    public ArmyDTO editArmy(ArmyPatchRequestDTO armyUpdates) throws Exception {
+    public void editArmy(ArmyPatchRequestDTO armyUpdates) throws Exception {
         List<String> updateFields = StreamSupport.stream(armyFieldsRepo.findAll().spliterator(), false)
                 .filter(ArmyField::isPatchEnabled)
                 .map(ArmyField::getName)
@@ -117,7 +116,7 @@ public class ArmyService {
                             currentArmy.setName(newName);
                         }
                         break;
-                    case "faction":
+                    case "faction_type_id":
                         String newFaction = updates.get(field).toString();
                         if(!currentArmy.getFaction().getName().equals(newFaction)) {
                             currentArmy.setFaction(factionRepo.findFactionTypeByName(newFaction));
@@ -129,7 +128,7 @@ public class ArmyService {
                             currentArmy.setCommandPoints(newCP);
                         }
                         break;
-                    case "sizeClass":
+                    case "size":
                         String newSize = updates.get(field).toString();
                         if(!currentArmy.getSizeClass().equals(newSize)) {
                             currentArmy.setSizeClass(newSize);
@@ -146,7 +145,6 @@ public class ArmyService {
                 }
             }
             armyRepo.save(currentArmy);
-            return mapArmyToArmyDTO(currentArmy);
         }
         catch(Exception e) {
             log.error("Error editing armyUpdates {}: {}", armyUpdates.getArmyId(), e.getMessage());
@@ -156,7 +154,7 @@ public class ArmyService {
 
     //region private methods
 
-    private ArmyDTO mapArmyToArmyDTO(Army a) { //TODO: look into using Mapstruct for simple mapping like this one
+    public ArmyDTO mapArmyToArmyDTO(Army a) { //TODO: look into using Mapstruct for simple mapping like this one
         return ArmyDTO.builder()
                 .armyId(a.getArmy_id())
                 .commandPoints(a.getCommandPoints())
