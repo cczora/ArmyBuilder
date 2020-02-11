@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,7 +17,10 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table
 public class Detachment implements Serializable {
+
+    private static final long serialVersionUID = -3798228120704087633L;
 
     @Id
     @Column(name = "detachment_id")
@@ -39,8 +43,7 @@ public class Detachment implements Serializable {
     @Column
     private String notes;
 
-    @OneToMany
-    @JoinTable(name = "unit")
+    @OneToMany(mappedBy = "detachment", cascade = CascadeType.ALL)
     private List<Unit> units;
 
     @Override

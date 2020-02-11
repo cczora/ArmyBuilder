@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
 
  @Entity
@@ -12,9 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
  @Builder
- public class Account {
+ public class Account implements Serializable {
 
-    @Id
+     private static final long serialVersionUID = -6407324986805263828L;
+
+     @Id
      private String username;
 
     @NotNull

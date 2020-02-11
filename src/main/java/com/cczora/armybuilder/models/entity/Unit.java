@@ -15,6 +15,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Unit implements Serializable {
 
+    private static final long serialVersionUID = 7604476564781331578L;
+
     @Id
     private UUID unitId;
 
@@ -31,6 +33,9 @@ public class Unit implements Serializable {
 
     @Column(name = "detachment_id", nullable = false)
     private UUID detachmentId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Detachment detachment;
 
     @Override
     public boolean equals(Object o) {

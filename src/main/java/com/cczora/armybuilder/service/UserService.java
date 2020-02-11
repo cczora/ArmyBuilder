@@ -46,9 +46,9 @@ public class UserService implements UserDetailsService {
 
     public Account add(Account user) throws DuplicateUsernameException {
         
-        Account appUser = users.findByUsername(user.getUsername());
+        Optional<Account> appUser = users.findById(user.getUsername());
         
-        if (appUser != null) { //already there
+        if (appUser.isPresent()) { //already there
             throw new DuplicateUsernameException(String.format("User %s is already registered", user.getUsername()));
         }
 

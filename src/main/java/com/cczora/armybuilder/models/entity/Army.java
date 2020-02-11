@@ -1,16 +1,9 @@
 package com.cczora.armybuilder.models.entity;
 
 import lombok.*;
-import org.hibernate.annotations.Type;
-import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,7 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "army", schema = "public")
-public class Army {
+public class Army implements Serializable {
+
+    private static final long serialVersionUID = 2242079497393722021L;
 
     @Id
     private UUID army_id;

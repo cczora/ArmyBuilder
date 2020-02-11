@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.webjars.NotFoundException;
 
 import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
@@ -42,6 +43,16 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NoSuchFieldException.class)
     public final ResponseEntity<Error> handleNoSuchFieldException(NoSuchFieldException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                Error.builder()
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build(),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public final ResponseEntity<Error> handleNotFoundException(NotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(
                 Error.builder()
                         .message(ex.getMessage())

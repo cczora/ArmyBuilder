@@ -2,21 +2,19 @@ package com.cczora.armybuilder.service;
 
 import com.cczora.armybuilder.TestConstants;
 import com.cczora.armybuilder.data.*;
+import com.cczora.armybuilder.data.fields.ArmyFieldRepository;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
-import com.cczora.armybuilder.models.dto.KeyValuePair;
-import com.cczora.armybuilder.models.entity.Account;
-import com.cczora.armybuilder.models.entity.Army;
+import com.cczora.armybuilder.models.KeyValuePair;
+import com.cczora.armybuilder.models.dto.PatchRequestDTO;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
@@ -82,14 +80,13 @@ public class ArmyServiceIT {
         service.deleteArmyById(testArmy.getArmyId());
         fromRepo = service.getArmiesByUsername(TestConstants.username);
         assertEquals(0, fromRepo.size());
-
     }
 
     //region private methods
 
     private ArmyDTO makeTestArmyDTO() {
         return ArmyDTO.builder()
-                .name(faker.lorem().words(2).toString())
+                .name(faker.lorem().words(1).get(0))
                 .sizeClass("small")
                 .factionName("Necrons")
                 .notes(faker.zelda().character())

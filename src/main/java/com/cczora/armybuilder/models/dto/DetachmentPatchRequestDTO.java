@@ -10,12 +10,12 @@ import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ArmyPatchRequestDTO extends PatchRequestDTO {
-    private UUID armyId;
+public class DetachmentPatchRequestDTO extends PatchRequestDTO {
+    private UUID detachmentId;
 
     @Builder
-    public ArmyPatchRequestDTO(List<KeyValuePair> updates, UUID armyId) {
+    public DetachmentPatchRequestDTO(List<KeyValuePair> updates, UUID detachmentId) {
         super(updates);
-        this.armyId = armyId;
+        this.detachmentId = detachmentId;
     }
 }

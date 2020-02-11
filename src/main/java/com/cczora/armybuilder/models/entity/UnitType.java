@@ -18,6 +18,7 @@ import java.util.UUID;
 public class UnitType implements Serializable {
 
     private static final long serialVersionUID = -8952298989988435673L;
+
     @Id
     private UUID unit_type_id;
 

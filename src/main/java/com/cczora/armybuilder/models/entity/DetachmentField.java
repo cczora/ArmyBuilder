@@ -7,9 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 
-@Table(name = "army_fields")
+@Table(name = "detachment_fields")
 @Entity
 @Getter
-public class ArmyField extends Field implements Serializable {
-    private static final long serialVersionUID = 7032360875824260694L;
+public class DetachmentField extends Field implements Serializable {
+    private static final long serialVersionUID = 6261441060057232854L;
 }

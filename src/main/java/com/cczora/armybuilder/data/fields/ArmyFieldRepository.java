@@ -1,4 +1,4 @@
-package com.cczora.armybuilder.data;
+package com.cczora.armybuilder.data.fields;
 
 import com.cczora.armybuilder.models.entity.ArmyField;
 import org.springframework.data.repository.CrudRepository;

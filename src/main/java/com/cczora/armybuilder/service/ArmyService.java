@@ -1,9 +1,10 @@
 package com.cczora.armybuilder.service;
 
+import com.cczora.armybuilder.config.AppConstants;
 import com.cczora.armybuilder.data.*;
+import com.cczora.armybuilder.data.fields.ArmyFieldRepository;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
-import com.cczora.armybuilder.models.dto.KeyValuePair;
 import com.cczora.armybuilder.models.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -94,19 +94,8 @@ public class ArmyService {
     }
 
     public void editArmy(ArmyPatchRequestDTO armyUpdates) throws Exception {
-        List<String> updateFields = StreamSupport.stream(armyFieldsRepo.findAll().spliterator(), false)
-                .filter(ArmyField::isPatchEnabled)
-                .map(ArmyField::getName)
-                .collect(Collectors.toList());
-        Map<String, Object> updates = armyUpdates.getUpdates().stream()
-                .collect(Collectors.toMap(KeyValuePair::getKey, KeyValuePair::getValue));
-        for(String updateField : updates.keySet()) {
-            if(!updateFields.contains(updateField)) {
-                log.error("Invalid field {}", updateField);
-                throw new NoSuchFieldException(String.format("Field %s is not allowed to be updated. Supported fields are %s.", updateField, updateFields.toString()));
-            }
-        }
         try {
+            Map<String, Object> updates = AppConstants.checkRequiredFieldsForPatch(armyFieldsRepo, armyUpdates.getUpdates());
             Army currentArmy = armyRepo.findById(armyUpdates.getArmyId()).get();
             for(String field : updates.keySet()) {
                 switch(field) {

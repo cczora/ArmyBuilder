@@ -1,4 +1,4 @@
-package com.cczora.armybuilder.models.dto;
+package com.cczora.armybuilder.models;
 
 import lombok.Builder;
 import lombok.Data;
