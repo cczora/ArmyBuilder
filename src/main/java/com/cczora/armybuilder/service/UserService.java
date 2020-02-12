@@ -3,16 +3,14 @@ package com.cczora.armybuilder.service;
 import com.cczora.armybuilder.config.exception.DuplicateUsernameException;
 import com.cczora.armybuilder.models.entity.Account;
 import com.cczora.armybuilder.data.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +30,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws NotFoundException {
         Optional<Account> user = users.findById(username);
         
         if(user.isEmpty()) {
-            throw new UsernameNotFoundException(String.format("Username %s not found", username));
+            throw new NotFoundException(String.format("Username %s not found", username));
         }
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
@@ -44,7 +42,7 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), grantedAuthorities);
     }
 
-    public Account add(Account user) throws DuplicateUsernameException {
+    public void add(Account user) throws DuplicateUsernameException {
         
         Optional<Account> appUser = users.findById(user.getUsername());
         
@@ -53,7 +51,6 @@ public class UserService implements UserDetailsService {
         }
 
         user.setPassword(encoder.encode(user.getPassword()));
-        user = users.save(user);
-        return user;
+        users.save(user);
     }
 }

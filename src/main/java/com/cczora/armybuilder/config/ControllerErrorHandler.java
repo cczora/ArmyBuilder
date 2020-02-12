@@ -2,7 +2,6 @@ package com.cczora.armybuilder.config;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.webjars.NotFoundException;
 
+import javax.persistence.PersistenceException;
 import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 
@@ -31,16 +31,6 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public final ResponseEntity<Error> handleUsernameNotFoundException(UsernameNotFoundException ex, WebRequest request) {
-        return new ResponseEntity<>(
-                Error.builder()
-                        .message(USER_NOT_FOUND + ex.getMessage())
-                        .timestamp(LocalDateTime.now())
-                        .build(),
-                HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(NoSuchFieldException.class)
     public final ResponseEntity<Error> handleNoSuchFieldException(NoSuchFieldException ex, WebRequest request) {
         return new ResponseEntity<>(
@@ -48,7 +38,7 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
                         .message(ex.getMessage())
                         .timestamp(LocalDateTime.now())
                         .build(),
-                HttpStatus.NOT_FOUND);
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -59,6 +49,16 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .build(),
                 HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PersistenceException.class)
+    public final ResponseEntity<Error> handlePersistenceException(PersistenceException ex, WebRequest request) {
+        return new ResponseEntity<>(
+                Error.builder()
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build(),
+                HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(Exception.class)

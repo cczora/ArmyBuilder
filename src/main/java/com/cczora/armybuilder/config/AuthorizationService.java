@@ -10,4 +10,5 @@ public interface AuthorizationService {
 
     void validatePrincipalArmy(Principal principal, UUID armyId) throws ValidationException;
 
+    void validatePrincipalDetachment(Principal principal, UUID detachmentId) throws ValidationException;
 }

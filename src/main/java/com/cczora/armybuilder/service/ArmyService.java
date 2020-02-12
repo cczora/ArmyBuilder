@@ -6,13 +6,17 @@ import com.cczora.armybuilder.data.fields.ArmyFieldRepository;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
 import com.cczora.armybuilder.models.entity.*;
+import com.cczora.armybuilder.models.mapping.ArmyMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,7 @@ public class ArmyService {
 
     private final UserRepository userRepo;
     private final ArmyRepository armyRepo;
+    private static final ArmyMapper mapper = ArmyMapper.MAPPER;
     private final ArmyFieldRepository armyFieldsRepo;
     private final FactionTypeRepository factionRepo;
     private final DetachmentRepository detachmentRepo;
@@ -51,24 +56,21 @@ public class ArmyService {
         return armies.stream().map(this::mapArmyToArmyDTO).collect(Collectors.toList());
     }
 
-    public ArmyDTO addArmy(ArmyDTO army, String username) throws Exception {
+    public ArmyDTO addArmy(ArmyDTO army, String username) throws PersistenceException {
         try {
             log.debug("Adding army {} for user {}", army.getName(), username);
             FactionType faction = factionRepo.findFactionTypeByName(army.getFactionName());
-            Army armyEntity = Army.builder()
-                    .army_id(UUID.randomUUID())
-                    .name(army.getName())
-                    .faction(faction)
-                    .username(username)
-                    .sizeClass(army.getSizeClass())
-                    .notes(army.getNotes())
-                    .build();
+            Army armyEntity = mapper.armyDTOToArmy(army);
+            armyEntity.setArmy_id(UUID.randomUUID());
+            armyEntity.setCommandPoints(3);
+            armyEntity.setUsername(username);
             armyEntity = armyRepo.save(armyEntity);
-            return mapArmyToArmyDTO(armyEntity);
+            log.debug("Successfully added army {}", armyEntity.getArmy_id());
+            return mapper.armyToArmyDTO(armyEntity);
         }
-        catch(Exception e) {
+        catch(DataAccessException e) {
             log.error("Error adding army {}: {}", army.getName(), e);
-            throw new Exception(e.getMessage(), e); //TODO: make custom exceptions?
+            throw new PersistenceException(e.getMessage(), e);
         }
     }
 
@@ -96,44 +98,47 @@ public class ArmyService {
     public void editArmy(ArmyPatchRequestDTO armyUpdates) throws Exception {
         try {
             Map<String, Object> updates = AppConstants.checkRequiredFieldsForPatch(armyFieldsRepo, armyUpdates.getUpdates());
-            Army currentArmy = armyRepo.findById(armyUpdates.getArmyId()).get();
-            for(String field : updates.keySet()) {
-                switch(field) {
-                    case "name":
-                        String newName = updates.get(field).toString();
-                        if(!currentArmy.getName().equals(newName)) {
-                            currentArmy.setName(newName);
-                        }
-                        break;
-                    case "faction_type_id":
-                        String newFaction = updates.get(field).toString();
-                        if(!currentArmy.getFaction().getName().equals(newFaction)) {
-                            currentArmy.setFaction(factionRepo.findFactionTypeByName(newFaction));
-                        }
-                        break;
-                    case "commandPoints":
-                        int newCP = Integer.parseInt(updates.get(field).toString());
-                        if(currentArmy.getCommandPoints() != newCP) {
-                            currentArmy.setCommandPoints(newCP);
-                        }
-                        break;
-                    case "size":
-                        String newSize = updates.get(field).toString();
-                        if(!currentArmy.getSizeClass().equals(newSize)) {
-                            currentArmy.setSizeClass(newSize);
-                        }
-                        break;
-                    case "notes":
-                        String newNotes = updates.get(field).toString();
-                        if(!currentArmy.getNotes().equals(newNotes)) {
-                            currentArmy.setNotes(newNotes);
-                        }
-                        break;
-                    default:
-                        break;
+            Optional<Army> currentArmy = armyRepo.findById(armyUpdates.getArmyId());
+            if(currentArmy.isPresent()) {
+                Army currArmy = currentArmy.get();
+                for(String field : updates.keySet()) {
+                    switch(field) {
+                        case "name":
+                            String newName = updates.get(field).toString();
+                            if(!currArmy.getName().equals(newName)) {
+                                currArmy.setName(newName);
+                            }
+                            break;
+                        case "faction_type_id":
+                            String newFaction = updates.get(field).toString();
+                            if(!currArmy.getFaction().getName().equals(newFaction)) {
+                                currArmy.setFaction(factionRepo.findFactionTypeByName(newFaction));
+                            }
+                            break;
+                        case "commandPoints":
+                            int newCP = Integer.parseInt(updates.get(field).toString());
+                            if(currArmy.getCommandPoints() != newCP) {
+                                currArmy.setCommandPoints(newCP);
+                            }
+                            break;
+                        case "size":
+                            String newSize = updates.get(field).toString();
+                            if(!currArmy.getSizeClass().equals(newSize)) {
+                                currArmy.setSizeClass(newSize);
+                            }
+                            break;
+                        case "notes":
+                            String newNotes = updates.get(field).toString();
+                            if(!currArmy.getNotes().equals(newNotes)) {
+                                currArmy.setNotes(newNotes);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                armyRepo.save(currArmy);
             }
-            armyRepo.save(currentArmy);
         }
         catch(Exception e) {
             log.error("Error editing armyUpdates {}: {}", armyUpdates.getArmyId(), e.getMessage());
