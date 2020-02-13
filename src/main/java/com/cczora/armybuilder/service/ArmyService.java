@@ -5,7 +5,10 @@ import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.data.fields.ArmyFieldRepository;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
-import com.cczora.armybuilder.models.entity.*;
+import com.cczora.armybuilder.models.entity.Army;
+import com.cczora.armybuilder.models.entity.Detachment;
+import com.cczora.armybuilder.models.entity.FactionType;
+import com.cczora.armybuilder.models.entity.Unit;
 import com.cczora.armybuilder.models.mapping.ArmyMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +29,18 @@ public class ArmyService {
 
     private final UserRepository userRepo;
     private final ArmyRepository armyRepo;
-    private static final ArmyMapper mapper = ArmyMapper.MAPPER;
+    private final ArmyMapper mapper;
     private final ArmyFieldRepository armyFieldsRepo;
     private final FactionTypeRepository factionRepo;
     private final DetachmentRepository detachmentRepo;
     private final UnitRepository unitRepo;
 
     @Autowired
-    public ArmyService(UserRepository userRepo, ArmyRepository armyRepo, ArmyFieldRepository armyFieldsRepo, FactionTypeRepository factionRepo,
+    public ArmyService(UserRepository userRepo, ArmyRepository armyRepo, ArmyMapper mapper, ArmyFieldRepository armyFieldsRepo, FactionTypeRepository factionRepo,
                        DetachmentRepository detachmentRepo, UnitRepository unitRepo) {
         this.userRepo = userRepo;
         this.armyRepo = armyRepo;
+        this.mapper = mapper;
         this.armyFieldsRepo = armyFieldsRepo;
         this.factionRepo = factionRepo;
         this.detachmentRepo = detachmentRepo;
@@ -53,14 +57,14 @@ public class ArmyService {
 
     public List<ArmyDTO> getArmiesByUsername(String username) {
         List<Army> armies = armyRepo.findAllByUsername(username);
-        return armies.stream().map(this::mapArmyToArmyDTO).collect(Collectors.toList());
+        return armies.stream().map(mapper::armyToArmyDTO).collect(Collectors.toList());
     }
 
     public ArmyDTO addArmy(ArmyDTO army, String username) throws PersistenceException {
         try {
             log.debug("Adding army {} for user {}", army.getName(), username);
             FactionType faction = factionRepo.findFactionTypeByName(army.getFactionName());
-            Army armyEntity = mapper.armyDTOToArmy(army);
+            Army armyEntity = mapper.armyDTOToArmy(army, username);
             armyEntity.setArmy_id(UUID.randomUUID());
             armyEntity.setCommandPoints(3);
             armyEntity.setUsername(username);
@@ -78,7 +82,6 @@ public class ArmyService {
     public void deleteArmyById(UUID id) throws Exception {
         log.debug("Deleting army {}", id);
         try {
-            //TODO: add SQl triggers to delete detachments and units for armies instead of relying on repos
             List<Detachment> detachments = detachmentRepo.findAllByArmyId(id);
             detachmentRepo.deleteAll(detachments);
 
@@ -145,20 +148,4 @@ public class ArmyService {
             throw new Exception(e);
         }
     }
-
-    //region private methods
-
-    public ArmyDTO mapArmyToArmyDTO(Army a) { //TODO: look into using Mapstruct for simple mapping like this one
-        return ArmyDTO.builder()
-                .armyId(a.getArmy_id())
-                .commandPoints(a.getCommandPoints())
-                .factionName(a.getFaction().getName())
-                .name(a.getName())
-                .notes(a.getNotes())
-                .sizeClass(a.getSizeClass())
-                .build();
-    }
-
-    //endregion
-
 }

@@ -32,3 +32,4 @@ build/
 
 ### User-Defined ###
 /heroku-recovery-codes.txt
+/.mvn/

@@ -40,7 +40,12 @@ public class DetachmentController {
         if(principal != null) {
             authorizationService.validatePrincipalArmy(principal, armyId);
         }
-        return ResponseEntity.ok(service.getDetachmentsByArmyId(armyId, getFullDetachments));
+        if(getFullDetachments) {
+            return ResponseEntity.ok(service.getFullDetachmentsByArmyId(armyId));
+        }
+        else {
+            return ResponseEntity.ok(service.getDetachmentsByArmyId(armyId));
+        }
     }
 
     @Operation(description = "Gets a single detachment with its associated units")

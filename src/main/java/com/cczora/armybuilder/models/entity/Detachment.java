@@ -1,10 +1,6 @@
 package com.cczora.armybuilder.models.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.Cascade;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table
+@Builder
 public class Detachment implements Serializable {
 
     private static final long serialVersionUID = -3798228120704087633L;
@@ -43,7 +40,7 @@ public class Detachment implements Serializable {
     @Column
     private String notes;
 
-    @OneToMany(mappedBy = "detachment", cascade = CascadeType.ALL)
+    @Transient
     private List<Unit> units;
 
     @Override

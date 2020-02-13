@@ -1,13 +1,16 @@
 package com.cczora.armybuilder.service;
 
 import com.cczora.armybuilder.TestConstants;
-import com.cczora.armybuilder.data.DetachmentRepository;
-import com.cczora.armybuilder.data.DetachmentTypeRepository;
-import com.cczora.armybuilder.data.FactionTypeRepository;
-import com.cczora.armybuilder.data.UnitRepository;
+import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.data.fields.DetachmentFieldsRepository;
+import com.cczora.armybuilder.models.KeyValuePair;
 import com.cczora.armybuilder.models.dto.DetachmentDTO;
+import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
+import com.cczora.armybuilder.models.entity.Army;
+import com.cczora.armybuilder.models.entity.FactionType;
+import com.cczora.armybuilder.models.mapping.DetachmentMapper;
 import com.github.javafaker.Faker;
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,38 +18,92 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 public class DetachmentServiceIT {
 
+    private ArmyRepository armyRepo;
     private DetachmentRepository detachmentRepo;
-    private DetachmentService detachmentService;
+    private UnitRepository unitRepo;
+    private DetachmentService service;
     private Faker faker = new Faker();
 
     @Autowired
-    public DetachmentServiceIT(DetachmentRepository detachmentRepo, DetachmentTypeRepository detachmentTypeRepo, DetachmentFieldsRepository detachmentFieldsRepo, FactionTypeRepository factionTypeRepo, UnitRepository unitRepo, DetachmentService detachmentService) {
+    public DetachmentServiceIT(ArmyRepository armyRepo, DetachmentRepository detachmentRepo, DetachmentMapper mapper, DetachmentTypeRepository detachmentTypeRepo, DetachmentFieldsRepository detachmentFieldsRepo, FactionTypeRepository factionTypeRepo, UnitRepository unitRepo) {
+        this.armyRepo = armyRepo;
         this.detachmentRepo = detachmentRepo;
-        this.detachmentService = new DetachmentService(detachmentRepo, detachmentTypeRepo, detachmentFieldsRepo, factionTypeRepo, unitRepo);
+        this.unitRepo = unitRepo;
+        this.service = new DetachmentService(detachmentRepo, mapper, detachmentTypeRepo, detachmentFieldsRepo, factionTypeRepo, unitRepo);
     }
 
     @BeforeEach
-    public void cleanup() {
+    public void cleanupAddTestArmy() {
         detachmentRepo.deleteAll();
+        unitRepo.deleteAll();
+        armyRepo.deleteAll();
+
+        armyRepo.save(Army.builder()
+                .army_id(TestConstants.armyId)
+                .name(faker.lorem().word())
+                .username(TestConstants.username)
+                .sizeClass("small")
+                .faction(FactionType.builder().factionTypeId(TestConstants.factionTypeId).name(TestConstants.factionTypeName).build())
+                .build());
     }
 
     @Test
     public void DetachmentCRUD() throws Exception {
-        DetachmentDTO dto = makeTestDetachmentDTO();
+        DetachmentDTO testDetachment = makeTestDetachmentDTO();
+        service.addDetachment(testDetachment);
+        List<DetachmentDTO> fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
+        assertEquals(1, fromRepo.size());
+        assertEquals(testDetachment, fromRepo.get(0));
 
+        service.editDetachment(DetachmentPatchRequestDTO.builder()
+                .detachmentId(testDetachment.getDetachmentId())
+                .updates(Lists.newArrayList(
+                        KeyValuePair.builder()
+                                .key("detachment_type_id")
+                                .value(TestConstants.updatedDetachmentTypeName)
+                                .build(),
+                        KeyValuePair.builder()
+                                .key("faction_type_id")
+                                .value(TestConstants.updatedFaction)
+                                .build(),
+                        KeyValuePair.builder()
+                                .key("name")
+                                .value(TestConstants.updatedName)
+                                .build(),
+                        KeyValuePair.builder()
+                                .key("notes")
+                                .value(TestConstants.updatedNotes)
+                                .build()))
+                .build());
+
+        fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
+        assertEquals(1, fromRepo.size());
+        assertEquals(TestConstants.updatedDetachmentTypeName, fromRepo.get(0).getDetachmentType());
+        assertEquals(TestConstants.updatedFaction, fromRepo.get(0).getFactionType());
+        assertEquals(TestConstants.updatedName, fromRepo.get(0).getName());
+        assertEquals(TestConstants.updatedNotes, fromRepo.get(0).getNotes());
+
+        service.deleteDetachment(testDetachment.getDetachmentId(), testDetachment.getArmyId());
+        fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
+        assertEquals(0, fromRepo.size());
     }
 
     //region private methods
 
     private DetachmentDTO makeTestDetachmentDTO() {
         return DetachmentDTO.builder()
+                .detachmentId(TestConstants.detachmentId)
                 .armyId(TestConstants.armyId)
-                .detachmentType("Air Wing")
-                .factionType("Necrons")
+                .detachmentType(TestConstants.detachmentTypeName)
+                .factionType(TestConstants.factionTypeName)
                 .name(faker.funnyName().name())
                 .notes(faker.princessBride().quote())
                 .build();

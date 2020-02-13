@@ -3,9 +3,9 @@ package com.cczora.armybuilder.service;
 import com.cczora.armybuilder.TestConstants;
 import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.data.fields.ArmyFieldRepository;
+import com.cczora.armybuilder.models.KeyValuePair;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
-import com.cczora.armybuilder.models.KeyValuePair;
 import com.cczora.armybuilder.models.mapping.ArmyMapper;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
@@ -31,12 +31,13 @@ public class ArmyServiceIT {
     @Autowired
     public ArmyServiceIT(UserRepository userRepo,
                          ArmyRepository armyRepo,
+                         ArmyMapper mapper,
                          ArmyFieldRepository armyFieldsRepo,
                          FactionTypeRepository factionTypeRepo,
                          DetachmentRepository detachmentRepo,
                          UnitRepository unitRepo) {
         this.armyRepo = armyRepo;
-        this.service = new ArmyService(userRepo, armyRepo, armyFieldsRepo, factionTypeRepo, detachmentRepo, unitRepo);
+        this.service = new ArmyService(userRepo, armyRepo, mapper, armyFieldsRepo, factionTypeRepo, detachmentRepo, unitRepo);
     }
 
     @BeforeEach

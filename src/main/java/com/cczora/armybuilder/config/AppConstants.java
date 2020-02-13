@@ -1,7 +1,7 @@
 package com.cczora.armybuilder.config;
 
-import com.cczora.armybuilder.models.KeyValuePair;
 import com.cczora.armybuilder.models.Field;
+import com.cczora.armybuilder.models.KeyValuePair;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.CrudRepository;
 

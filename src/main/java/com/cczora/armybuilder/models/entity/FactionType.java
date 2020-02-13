@@ -13,7 +13,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "faction_type")
+@Builder
 public class FactionType implements Serializable {
 
     private static final long serialVersionUID = 8643387175043144289L;

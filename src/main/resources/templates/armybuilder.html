@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+>
 
 <head>
     <meta charset="UTF-8">
@@ -19,6 +19,7 @@
 
     <!--Body-->
     <input type="hidden" id="armySizeClass" th:value="${army.sizeClass}">
+    <!--/*@thymesVar id="armyId" type="java.util.UUID"*/-->
     <input type="hidden" id="armyId" th:value="${army.armyId}">
     <div class="container">
 

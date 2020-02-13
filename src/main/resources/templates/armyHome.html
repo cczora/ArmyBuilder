@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+>
 
 <head>
     <meta charset="UTF-8">
@@ -25,7 +25,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/addArmy">
+                    <form method="POST" action="/armybuilder/army/{armyId}">
                         <div class="form-group">
                             <input type="text" class="form-control" id="armyName" name="name" placeholder="Army Name">
                         </div>
@@ -55,7 +55,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="text" name="armyNotes" class="form-control" id="armyNotes" placeholder="Notes">
+                            <label for="armyNotes">Notes</label><input type="text" name="armyNotes" class="form-control" id="armyNotes" placeholder="Notes">
                         </div>
                         <button id="submitArmyButton" class="btn btn-success"><i class="fas fa-check"></i></button>
                         <a role="button" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-times"></i></a>
@@ -83,10 +83,10 @@
 
 
     <i role="button" class="fas fa-plus-circle fa-3x" id="addArmyButton" data-toggle="modal" data-target="#addArmyModal"
-        cursor="select"></i>
+    ></i>
 
     <!--Bodys-->
-    <div class="cards d-flex justify-content-around flex-wrap" id="cardTable" name="cardTable">
+    <div class="cards d-flex justify-content-around flex-wrap" id="cardTable">
         <!--army cards go here-->
     </div>
 

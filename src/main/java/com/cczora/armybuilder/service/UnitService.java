@@ -4,7 +4,6 @@ import com.cczora.armybuilder.data.UnitRepository;
 import com.cczora.armybuilder.data.UnitTypeRepository;
 import com.cczora.armybuilder.models.entity.Unit;
 import com.cczora.armybuilder.models.entity.UnitType;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,8 @@ public class UnitService {
     }
 
     public Unit addUnit(Unit unitToAdd, UUID detachmentId, UUID armyId) {
-        if(unitToAdd.getUnitId() == null) {
-            unitToAdd.setUnitId(UUID.randomUUID());
+        if(unitToAdd.getUnit_Id() == null) {
+            unitToAdd.setUnit_Id(UUID.randomUUID());
         }
         unitToAdd.setDetachmentId(detachmentId);
         unitRepo.save(unitToAdd);

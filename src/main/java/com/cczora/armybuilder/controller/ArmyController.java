@@ -5,7 +5,6 @@ import com.cczora.armybuilder.config.AuthorizationService;
 import com.cczora.armybuilder.config.AuthorizationServiceImpl;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
-import com.cczora.armybuilder.models.entity.Army;
 import com.cczora.armybuilder.service.ArmyService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

@@ -1,8 +1,8 @@
 package com.cczora.armybuilder.service;
 
 import com.cczora.armybuilder.config.exception.DuplicateUsernameException;
-import com.cczora.armybuilder.models.entity.Account;
 import com.cczora.armybuilder.data.UserRepository;
+import com.cczora.armybuilder.models.entity.Account;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

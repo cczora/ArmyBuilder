@@ -3,7 +3,6 @@ package com.cczora.armybuilder.controller;
 import com.cczora.armybuilder.config.exception.DuplicateUsernameException;
 import com.cczora.armybuilder.models.entity.Account;
 import com.cczora.armybuilder.models.entity.Army;
-import com.cczora.armybuilder.models.entity.Detachment;
 import com.cczora.armybuilder.service.ArmyService;
 import com.cczora.armybuilder.service.UserService;
 import org.springframework.stereotype.Controller;

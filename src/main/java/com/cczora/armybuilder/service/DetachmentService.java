@@ -20,7 +20,10 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import javax.persistence.PersistenceException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,15 +31,16 @@ import java.util.stream.Collectors;
 public class DetachmentService {
 
     private final DetachmentRepository detachmentRepository;
-    private final static DetachmentMapper mapper = DetachmentMapper.MAPPER;
+    private DetachmentMapper mapper;
     private final DetachmentTypeRepository detachmentTypeRepo;
     private final DetachmentFieldsRepository detachmentFieldsRepo;
     private final FactionTypeRepository factionRepo;
     private final UnitRepository unitRepo;
 
     @Autowired
-    public DetachmentService(DetachmentRepository detachmentRepository, DetachmentTypeRepository detachmentTypeRepository, DetachmentFieldsRepository detachmentFieldsRepo, FactionTypeRepository factionRepo, UnitRepository unitRepo) {
+    public DetachmentService(DetachmentRepository detachmentRepository, DetachmentMapper mapper, DetachmentTypeRepository detachmentTypeRepository, DetachmentFieldsRepository detachmentFieldsRepo, FactionTypeRepository factionRepo, UnitRepository unitRepo) {
         this.detachmentRepository = detachmentRepository;
+        this.mapper = mapper;
         this.detachmentTypeRepo = detachmentTypeRepository;
         this.detachmentFieldsRepo = detachmentFieldsRepo;
         this.factionRepo = factionRepo;
@@ -47,17 +51,18 @@ public class DetachmentService {
         return detachmentTypeRepo.findAll();
     }
 
-    public List<?> getDetachmentsByArmyId(UUID armyId, boolean getFullDetachments) {
+    public List<DetachmentDTO> getDetachmentsByArmyId(UUID armyId) {
         List<Detachment> detachmentsForArmy =  detachmentRepository.findAllByArmyId(armyId);
-        if(getFullDetachments) {
-            for(Detachment d : detachmentsForArmy) {
-                d.setUnits(unitRepo.findAllByDetachmentId(d.getDetachmentId()));
-            }
-            return detachmentsForArmy;
+        return detachmentsForArmy.stream().map(mapper::entityToDto).collect(Collectors.toList());
+
+    }
+
+    public List<Detachment> getFullDetachmentsByArmyId(UUID armyId) {
+        List<Detachment> detachmentsForArmy =  detachmentRepository.findAllByArmyId(armyId);
+        for(Detachment d : detachmentsForArmy) {
+            d.setUnits(unitRepo.findAllByDetachmentId(d.getDetachmentId()));
         }
-        else {
-            return detachmentsForArmy.stream().map(mapper::detachmentToDetachmentDTO).collect(Collectors.toList());
-        }
+        return detachmentsForArmy;
     }
 
     public Detachment getFullDetachment(UUID detachmentId) throws NotFoundException {
@@ -73,11 +78,13 @@ public class DetachmentService {
 
     public void addDetachment(DetachmentDTO detachment) throws PersistenceException {
         try {
-            Detachment toSave = mapper.detachmentDTOtoDetachment(detachment);
-            toSave.setDetachmentId(UUID.randomUUID());
+            Detachment toSave = mapper.dtoToEntity(detachment);
+            if(detachment.getDetachmentId() == null) { //they already passed in a UUID to be used
+                toSave.setDetachmentId(UUID.randomUUID());
+            }
             toSave.setUnits(Lists.newArrayList());
             detachmentRepository.save(toSave);
-            mapper.detachmentToDetachmentDTO(toSave);
+            mapper.entityToDto(toSave);
         }
         catch(DataAccessException e) {
             log.error("Error adding detachment {}: {}", detachment.getName(), e.getMessage());
@@ -85,7 +92,7 @@ public class DetachmentService {
         }
     }
 
-    public void editDetachment(DetachmentPatchRequestDTO dto) throws NoSuchFieldException, PersistenceException {
+    public void editDetachment(DetachmentPatchRequestDTO dto) throws NoSuchFieldException {
         try {
             Map<String, Object> updates = AppConstants.checkRequiredFieldsForPatch(detachmentFieldsRepo, dto.getUpdates());
             Optional<Detachment> currentDetachment = detachmentRepository.findById(dto.getDetachmentId());
@@ -96,7 +103,7 @@ public class DetachmentService {
                         case "detachment_type_id":
                             String newType = updates.get(field).toString();
                             if (!currDetach.getDetachmentType().getName().equals(newType)) {
-                                currDetach.setDetachmentType(detachmentTypeRepo.getOne(newType));
+                                currDetach.setDetachmentType(detachmentTypeRepo.findDetachmentTypeByName(newType));
                             }
                             break;
                         case "faction_type_id":
@@ -130,7 +137,7 @@ public class DetachmentService {
         }
     }
 
-    public void deleteDetachment(UUID detachmentId, UUID armyId) throws NotFoundException, PersistenceException {
+    public void deleteDetachment(UUID detachmentId, UUID armyId) throws NotFoundException {
         boolean isInArmy = detachmentRepository.findAllByArmyId(armyId).stream()
                 .anyMatch(d -> d.getDetachmentId().equals(detachmentId));
         if(!isInArmy) {
