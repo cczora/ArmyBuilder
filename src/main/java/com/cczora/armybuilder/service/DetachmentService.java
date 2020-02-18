@@ -5,15 +5,12 @@ import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.data.fields.DetachmentFieldsRepository;
 import com.cczora.armybuilder.models.dto.DetachmentDTO;
 import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
-import com.cczora.armybuilder.models.entity.Army;
 import com.cczora.armybuilder.models.entity.Detachment;
 import com.cczora.armybuilder.models.entity.DetachmentType;
 import com.cczora.armybuilder.models.entity.Unit;
 import com.cczora.armybuilder.models.mapping.DetachmentMapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -39,8 +36,6 @@ public class DetachmentService {
     private final DetachmentFieldsRepository detachmentFieldsRepo;
     private final FactionTypeRepository factionRepo;
     private final UnitRepository unitRepo;
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Autowired
     public DetachmentService(ArmyRepository armyRepo, DetachmentRepository detachmentRepository, DetachmentMapper mapper, DetachmentTypeRepository detachmentTypeRepository, DetachmentFieldsRepository detachmentFieldsRepo, FactionTypeRepository factionRepo, UnitRepository unitRepo) {
@@ -84,7 +79,13 @@ public class DetachmentService {
 
     public void addDetachment(DetachmentDTO detachment) throws PersistenceException {
         try {
+            if(Optional.ofNullable(factionRepo.findFactionTypeByName(detachment.getFactionName())).isEmpty()) {
+                throw new NotFoundException(String.format("Faction %s not found.", detachment.getFactionName()));
+            }
             Detachment toSave = mapper.dtoToEntity(detachment);
+            if(toSave.getFaction() == null) { //set the faction to the parent army's faction
+                toSave.setFaction(armyRepo.findById(detachment.getArmyId()).get().getFaction());
+            }
             if(detachment.getDetachmentId() == null) { //they already passed in a UUID to be used
                 toSave.setId(UUID.randomUUID());
             }

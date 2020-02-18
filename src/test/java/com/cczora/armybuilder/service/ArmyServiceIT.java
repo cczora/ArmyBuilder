@@ -51,7 +51,9 @@ public class ArmyServiceIT {
 
     @BeforeEach
     public void cleanup() {
-        armyRepo.deleteAll();
+        if(armyRepo.findAll().size() > 0) {
+            armyRepo.deleteAll();
+        }
         userRepo.save(Account.builder()
                 .username("Test User")
                 .password("password")
@@ -132,6 +134,7 @@ public class ArmyServiceIT {
 
     private ArmyDTO makeTestArmyDTO() {
         return ArmyDTO.builder()
+                .armyId(TestConstants.armyId)
                 .name(faker.lorem().words(1).get(0))
                 .sizeClass("small")
                 .factionName("Necrons")

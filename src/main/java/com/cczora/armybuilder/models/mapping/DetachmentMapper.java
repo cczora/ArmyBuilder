@@ -4,7 +4,6 @@ import com.cczora.armybuilder.data.ArmyRepository;
 import com.cczora.armybuilder.data.DetachmentTypeRepository;
 import com.cczora.armybuilder.data.FactionTypeRepository;
 import com.cczora.armybuilder.models.dto.DetachmentDTO;
-import com.cczora.armybuilder.models.entity.Army;
 import com.cczora.armybuilder.models.entity.Detachment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,7 @@ public class DetachmentMapper {
                 .armyId(dto.getArmyId())
                 .id(dto.getDetachmentId())
                 .detachmentType(typeRepo.findDetachmentTypeByName(dto.getDetachmentType()))
-                .faction(factionRepo.findFactionTypeByName(dto.getFactionType()))
+                .faction(factionRepo.findFactionTypeByName(dto.getFactionName()))
                 .name(dto.getName())
                 .notes(dto.getNotes())
                 .build();
@@ -40,7 +39,7 @@ public class DetachmentMapper {
                 .armyId(detachment.getArmyId())
                 .notes(detachment.getNotes())
                 .detachmentType(detachment.getDetachmentType().getName())
-                .factionType(detachment.getFaction().getName())
+                .factionName(detachment.getFaction().getName())
                 .name(detachment.getName())
                 .build();
     }

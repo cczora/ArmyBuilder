@@ -81,6 +81,7 @@ public class ArmyService {
         }
         armyEntity.setCommandPoints(3);
         armyEntity.setUsername(username);
+        armyEntity.setFaction(factionRepo.findFactionTypeByName(army.getFactionName()));
         armyEntity = armyRepo.save(armyEntity);
         return mapper.armyToArmyDTO(armyEntity);
     }
@@ -124,8 +125,10 @@ public class ArmyService {
                             if(Optional.ofNullable(factionRepo.findFactionTypeByName(newFaction)).isEmpty()) {
                                 throw new NotFoundException(String.format("Faction %s not found.", newFaction));
                             }
-                            if(!currArmy.getFaction().getName().equals(newFaction)) {
-                                currArmy.setFaction(factionRepo.findFactionTypeByName(newFaction));
+                            if(!factionRepo.findById(currArmy.getFactionTypeId()).get().getName().equals(newFaction)) {
+                                FactionType newFT = factionRepo.findFactionTypeByName(newFaction);
+                                currArmy.setFaction(newFT);
+                                currArmy.setFactionTypeId(newFT.getFactionTypeId());
                             }
                             break;
                         case "commandPoints":

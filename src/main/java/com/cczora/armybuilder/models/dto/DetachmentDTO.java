@@ -15,7 +15,7 @@ public class DetachmentDTO {
     private UUID armyId;
     @NotBlank(message = "Type is required.")
     private String detachmentType;
-    private String factionType;
+    private String factionName;
     @NotBlank(message = "Name required.")
     private String name;
     private String notes;

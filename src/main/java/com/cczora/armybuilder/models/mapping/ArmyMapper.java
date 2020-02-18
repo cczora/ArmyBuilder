@@ -3,6 +3,7 @@ package com.cczora.armybuilder.models.mapping;
 import com.cczora.armybuilder.data.FactionTypeRepository;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.entity.Army;
+import com.cczora.armybuilder.models.entity.FactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +18,12 @@ public class ArmyMapper {
     }
 
     public Army armyDTOToArmy(ArmyDTO dto, String username) {
+        FactionType faction = typeRepo.findFactionTypeByName(dto.getFactionName());
         return Army.builder()
                 .commandPoints(dto.getCommandPoints())
                 .notes(dto.getNotes())
-                .faction(typeRepo.findFactionTypeByName(dto.getFactionName()))
+                .faction(faction)
+                .factionTypeId(faction.getFactionTypeId())
                 .sizeClass(dto.getSizeClass())
                 .username(username)
                 .name(dto.getName())
@@ -32,7 +35,7 @@ public class ArmyMapper {
         return ArmyDTO.builder()
                 .armyId(army.getId())
                 .notes(army.getNotes())
-                .factionName(army.getFaction().getName())
+                .factionName(typeRepo.findById(army.getFactionTypeId()).get().getName())
                 .sizeClass(army.getSizeClass())
                 .name(army.getName())
                 .commandPoints(army.getCommandPoints())

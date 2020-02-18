@@ -4,12 +4,9 @@ import com.cczora.armybuilder.TestConstants;
 import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.data.fields.DetachmentFieldsRepository;
 import com.cczora.armybuilder.models.KeyValuePair;
-import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.DetachmentDTO;
 import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
-import com.cczora.armybuilder.models.entity.Account;
 import com.cczora.armybuilder.models.entity.Army;
-import com.cczora.armybuilder.models.entity.FactionType;
 import com.cczora.armybuilder.models.mapping.DetachmentMapper;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
@@ -84,7 +81,7 @@ public class DetachmentServiceIT {
         fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
         assertEquals(1, fromRepo.size());
         assertEquals(TestConstants.updatedDetachmentTypeName, fromRepo.get(0).getDetachmentType());
-        assertEquals(TestConstants.updatedFaction, fromRepo.get(0).getFactionType());
+        assertEquals(TestConstants.updatedFaction, fromRepo.get(0).getFactionName());
         assertEquals(TestConstants.updatedName, fromRepo.get(0).getName());
         assertEquals(TestConstants.updatedNotes, fromRepo.get(0).getNotes());
 
@@ -100,7 +97,7 @@ public class DetachmentServiceIT {
                 .detachmentId(TestConstants.detachmentId)
                 .armyId(TestConstants.armyId)
                 .detachmentType(TestConstants.detachmentTypeName)
-                .factionType(TestConstants.factionTypeName)
+                .factionName(TestConstants.factionTypeName)
                 .name(faker.funnyName().name())
                 .notes(faker.princessBride().quote())
                 .build();
