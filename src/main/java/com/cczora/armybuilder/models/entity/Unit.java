@@ -14,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Builder
 public class Unit implements Serializable {
 
     private static final long serialVersionUID = 7604476564781331578L;
