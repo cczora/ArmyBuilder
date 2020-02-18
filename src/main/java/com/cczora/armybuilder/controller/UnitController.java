@@ -1,61 +1,76 @@
 package com.cczora.armybuilder.controller;
 
 import com.cczora.armybuilder.config.AppConstants;
+import com.cczora.armybuilder.config.AuthorizationService;
+import com.cczora.armybuilder.models.dto.UnitDTO;
+import com.cczora.armybuilder.models.dto.UnitPatchRequestDTO;
 import com.cczora.armybuilder.models.entity.Unit;
 import com.cczora.armybuilder.models.entity.UnitType;
 import com.cczora.armybuilder.service.UnitService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 
+import javax.validation.ValidationException;
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(AppConstants.basePath)
+@RequestMapping(AppConstants.basePath + "/unit")
 public class UnitController {
 
     private final UnitService service;
+    private final AuthorizationService authorizationService;
 
     @Autowired
-    public UnitController(UnitService service) {
+    public UnitController(UnitService service, AuthorizationService authorizationService) {
         this.service = service;
+        this.authorizationService = authorizationService;
     }
 
-    @GetMapping("/units/{armyId}/{detachmentId}")
-    public ResponseEntity<List<Unit>> getUnitsForDetachment(@PathVariable UUID armyId, @PathVariable UUID detachmentId) {
-        List<Unit> units = service.getUnitsForDetachment(detachmentId);
-        return ResponseEntity.ok(units);
+    @Operation(description = "Get all units for the given detachment")
+    @GetMapping("/{detachmentId}")
+    public ResponseEntity<List<UnitDTO>> getUnitsForDetachment(@PathVariable UUID detachmentId, Principal principal) {
+        if(principal != null) {
+            authorizationService.validatePrincipalDetachment(principal, detachmentId);
+        }
+        return ResponseEntity.ok(service.getUnitsForDetachment(detachmentId));
     }
 
     @GetMapping("/unitTypes")
     public ResponseEntity<List<UnitType>> getUnitTypes() {
-        List<UnitType> unitTypes = service.getAllUnitTypes();
-        return ResponseEntity.ok(unitTypes);
+        return ResponseEntity.ok(service.getAllUnitTypes());
     }
 
-    @PostMapping("/addUnit/{armyId}")
-    public ResponseEntity<Unit> addUnitToDetachment(@RequestBody Unit unit, @PathVariable UUID armyId) {
-        Unit newUnit = service.addUnit(unit, unit.getDetachmentId(), armyId);
+    @PostMapping("/{armyId}")
+    public ResponseEntity<UnitDTO> addUnitToDetachment(@RequestBody UnitDTO unit, @PathVariable UUID armyId, Principal principal) throws ValidationException, NotFoundException {
+        if(principal != null) {
+            authorizationService.validatePrincipalUnit(principal, unit.getId());
+        }
+        UnitDTO newUnit = service.addUnit(unit, unit.getDetachmentId(), armyId);
         return ResponseEntity.ok(newUnit);
     }
 
-    @PutMapping("/editUnit/{unitId}")
-    public ResponseEntity<Unit> editUnit(@PathVariable UUID unitId, @RequestBody Unit unit) {
-        Unit editedUnit = service.editUnit(unitId, unit);
-        if (editedUnit != null) {
-            return ResponseEntity.ok(editedUnit);
+    @PatchMapping("/{unitId}")
+    public ResponseEntity<?> editUnit(@RequestBody UnitPatchRequestDTO dto, Principal principal) throws NoSuchFieldException, ValidationException {
+        if(principal != null) {
+            authorizationService.validatePrincipalUnit(principal, dto.getUnitId());
         }
-        return ResponseEntity.badRequest().body(unit);
+        service.editUnit(dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteUnit/{unitId}")
-    public ResponseEntity deleteUnit(@PathVariable UUID unitId) {
-        if (service.deleteUnitById(unitId)) {
-            return new ResponseEntity(HttpStatus.OK);
+    @DeleteMapping("/{unitId}")
+    public ResponseEntity<?> deleteUnit(@PathVariable UUID unitId, @RequestBody UUID detachmentId, Principal principal) throws NotFoundException, ValidationException {
+        if(principal != null) {
+            authorizationService.validatePrincipalUnit(principal, unitId);
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        service.deleteUnitById(unitId, detachmentId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

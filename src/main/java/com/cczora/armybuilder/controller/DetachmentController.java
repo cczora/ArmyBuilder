@@ -93,14 +93,19 @@ public class DetachmentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(description = "Deletes a detachment and its associated units")
-    @DeleteMapping("/deleteDetachment/{armyId}/{detachmentId}")
-    public ResponseEntity<?> deleteDetachment(@PathVariable UUID armyId, @PathVariable UUID detachmentId, Principal principal)
+    @Operation(description = "Deletes units for a detachment. If deleteDetachment flag is set to false (default = true), will delete units for not the detachment itself")
+    @DeleteMapping("/{detachmentId}")
+    public ResponseEntity<?> deleteDetachment(@RequestBody UUID armyId, @RequestParam(defaultValue = "true") Boolean deleteDetachment,  @PathVariable UUID detachmentId, Principal principal)
             throws NotFoundException, ValidationException, PersistenceException {
         if(principal != null) {
             authorizationService.validatePrincipalArmy(principal, armyId);
         }
-        service.deleteDetachment(detachmentId, armyId);
+        if(deleteDetachment) {
+            service.deleteDetachment(detachmentId, armyId);
+        }
+        else {
+            service.deleteUnitsForDetachment(detachmentId, armyId);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -5,10 +5,7 @@ import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.data.fields.DetachmentFieldsRepository;
 import com.cczora.armybuilder.models.dto.DetachmentDTO;
 import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
-import com.cczora.armybuilder.models.entity.Detachment;
-import com.cczora.armybuilder.models.entity.DetachmentType;
-import com.cczora.armybuilder.models.entity.FactionType;
-import com.cczora.armybuilder.models.entity.Unit;
+import com.cczora.armybuilder.models.entity.*;
 import com.cczora.armybuilder.models.mapping.DetachmentMapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +14,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +32,12 @@ public class DetachmentService {
     private final DetachmentFieldsRepository detachmentFieldsRepo;
     private final FactionTypeRepository factionRepo;
     private final UnitRepository unitRepo;
+    private UnitTypeRepository unitTypeRepo;
 
     @Autowired
-    public DetachmentService(ArmyRepository armyRepo, DetachmentRepository detachmentRepository, DetachmentMapper mapper, DetachmentTypeRepository detachmentTypeRepository, DetachmentFieldsRepository detachmentFieldsRepo, FactionTypeRepository factionRepo, UnitRepository unitRepo) {
+    public DetachmentService(ArmyRepository armyRepo, DetachmentRepository detachmentRepository, DetachmentMapper mapper,
+                             DetachmentTypeRepository detachmentTypeRepository, DetachmentFieldsRepository detachmentFieldsRepo,
+                             FactionTypeRepository factionRepo, UnitRepository unitRepo, UnitTypeRepository unitTypeRepo) {
         this.armyRepo = armyRepo;
         this.detachmentRepository = detachmentRepository;
         this.mapper = mapper;
@@ -48,6 +45,7 @@ public class DetachmentService {
         this.detachmentFieldsRepo = detachmentFieldsRepo;
         this.factionRepo = factionRepo;
         this.unitRepo = unitRepo;
+        this.unitTypeRepo = unitTypeRepo;
     }
 
     public List<DetachmentType> getAllDetachmentTypes() {
@@ -75,6 +73,10 @@ public class DetachmentService {
             throw new NotFoundException(String.format("Detachment %s not found", detachmentId));
         }
         List<Unit> units = unitRepo.findAllByDetachmentId(detachmentId);
+        for(Unit u : units) {
+            Optional<UnitType> type = unitTypeRepo.findById(u.getUnitTypeId());
+            type.ifPresent(u::setUnitType);
+        }
         detachment.get().setUnits(units);
         return detachment.get();
     }
@@ -151,12 +153,25 @@ public class DetachmentService {
     }
 
     public void deleteDetachment(UUID detachmentId, UUID armyId) throws NotFoundException {
-        boolean isInArmy = detachmentRepository.findAllByArmyId(armyId).stream()
+        isInArmy(detachmentId, armyId);
+        detachmentRepository.deleteById(detachmentId);
+    }
+
+    public void deleteUnitsForDetachment(UUID detachmentId, UUID armyId) throws NotFoundException {
+        isInArmy(detachmentId, armyId);
+        unitRepo.deleteInBatch(unitRepo.findAllByDetachmentId(detachmentId));
+    }
+
+    //region private methods
+
+    private void isInArmy(UUID detachmentId, UUID armyId) throws NotFoundException {
+        boolean isInArmy =  detachmentRepository.findAllByArmyId(armyId).stream()
                 .anyMatch(d -> d.getId().equals(detachmentId));
         if(!isInArmy) {
             log.error("Detachment {} not found in army {}", detachmentId, armyId);
             throw new NotFoundException(String.format("Detachment %s not found in army %s", detachmentId, armyId));
         }
-        detachmentRepository.deleteById(detachmentId);
     }
+
+    //endregion
 }

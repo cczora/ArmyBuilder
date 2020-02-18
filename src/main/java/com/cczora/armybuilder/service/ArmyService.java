@@ -59,16 +59,10 @@ public class ArmyService {
         return armyRepo.findById(armyId).isPresent() ? armyRepo.findById(armyId).get() : new Army();
     }
 
-    public List<ArmyDTO> getArmiesByUsername(String username) throws NotFoundException {
-        Optional<List<Army>> armies = Optional.ofNullable(armyRepo.findArmiesByUsername(username));
-        if(armies.isPresent()) {
-            return armies.get().stream().map(mapper::armyToArmyDTO).collect(Collectors.toList());
-        }
-        else {
-            String message = String.format("User %s has no armies", username);
-            log.error("Error getting armies for user {}: {}", username, message);
-            throw new NotFoundException(message);
-        }
+    public List<ArmyDTO> getArmiesByUsername(String username) {
+        return armyRepo.findArmiesByUsername(username).stream()
+                .map(mapper::armyToArmyDTO)
+                .collect(Collectors.toList());
     }
 
     public ArmyDTO addArmy(@Valid ArmyDTO army, String username) throws NotFoundException, ValidationException, DataAccessException {
@@ -88,7 +82,6 @@ public class ArmyService {
 
     @Transactional
     public void deleteArmyById(UUID id) throws PersistenceException {
-        log.debug("Deleting army {}", id);
         try {
             List<Detachment> detachments = detachmentRepo.findAllByArmyId(id);
             detachmentRepo.deleteAll(detachments);
@@ -98,7 +91,6 @@ public class ArmyService {
                 unitRepo.deleteAll(units);
             }
             armyRepo.deleteById(id);
-            log.debug("Successfully deleted army {}", id);
         }
         catch(DataAccessException e) {
             log.error("Error deleting army {}: {}", id, e.getMessage());

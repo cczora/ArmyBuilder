@@ -11,11 +11,12 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "unit_type")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@EqualsAndHashCode
+@ToString
 public class UnitType implements Serializable {
 
     private static final long serialVersionUID = -8952298989988435673L;

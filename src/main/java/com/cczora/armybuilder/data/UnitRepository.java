@@ -12,7 +12,10 @@ import java.util.UUID;
 @Repository
 public interface UnitRepository extends JpaRepository<Unit, UUID> {
 
-    @Query(value = "select * from unit u where u.detachment_id = :detachmentId", nativeQuery = true)
+    @Query(value = "select u.id, detachment_id, unit_type_id, name, notes from unit u where u.detachment_id = :detachmentId", nativeQuery = true)
     List<Unit> findAllByDetachmentId(@Param(value = "detachmentId") UUID detachmentId);
+
+    @Query(value = "select distinct d.detachment_id from Detachment d inner join unit u on u.detachment_id = d.detachment_id where u.unit_id = :unitId", nativeQuery = true)
+    UUID findDetachmentIdForUnit(@Param("unitId") UUID unitId);
 
 }

@@ -7,9 +7,6 @@ import com.cczora.armybuilder.models.KeyValuePair;
 import com.cczora.armybuilder.models.dto.DetachmentDTO;
 import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
 import com.cczora.armybuilder.models.entity.Army;
-import com.cczora.armybuilder.models.entity.Detachment;
-import com.cczora.armybuilder.models.entity.Unit;
-import com.cczora.armybuilder.models.entity.UnitType;
 import com.cczora.armybuilder.models.mapping.DetachmentMapper;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
@@ -23,28 +20,22 @@ import org.webjars.NotFoundException;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class DetachmentServiceIT {
+public class UnitServiceIT {
 
     private ArmyRepository armyRepo;
-    private DetachmentRepository detachmentRepo;
-    private UnitRepository unitRepo;
-    private UnitTypeRepository unitTypeRepo;
     private DetachmentService service;
     private Faker faker = new Faker();
 
     @Autowired
-    public DetachmentServiceIT(ArmyRepository armyRepo, DetachmentRepository detachmentRepo, DetachmentMapper mapper, DetachmentTypeRepository detachmentTypeRepo, DetachmentFieldsRepository detachmentFieldsRepo, FactionTypeRepository factionTypeRepo, UnitRepository unitRepo, UnitTypeRepository unitTypeRepo) {
+    public UnitServiceIT(ArmyRepository armyRepo, DetachmentRepository detachmentRepo, DetachmentMapper mapper, DetachmentTypeRepository detachmentTypeRepo, DetachmentFieldsRepository detachmentFieldsRepo, FactionTypeRepository factionTypeRepo, UnitRepository unitRepo, UnitTypeRepository unitTypeRepo) {
         this.armyRepo = armyRepo;
-        this.detachmentRepo = detachmentRepo;
-        this.unitRepo = unitRepo;
-        this.unitTypeRepo = unitTypeRepo;
-        this.service = new DetachmentService(armyRepo, detachmentRepo, mapper, detachmentTypeRepo, detachmentFieldsRepo, factionTypeRepo, unitRepo, this.unitTypeRepo);
+        this.service = new DetachmentService(armyRepo, detachmentRepo, mapper, detachmentTypeRepo, detachmentFieldsRepo, factionTypeRepo, unitRepo, unitTypeRepo);
     }
 
     @BeforeEach
@@ -96,25 +87,6 @@ public class DetachmentServiceIT {
         service.deleteDetachment(testDetachment.getDetachmentId(), testDetachment.getArmyId());
         fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
         assertEquals(0, fromRepo.size());
-    }
-
-    @Test
-    public void deleteDetachment_deleteFlagSetToFalse_emptyUnits() throws Exception {
-        service.addDetachment(makeTestDetachmentDTO());
-        Unit unit = makeTestUnit();
-        unitRepo.save(unit);
-        Optional<Detachment> detachment = Optional.ofNullable(service.getFullDetachment(TestConstants.detachmentId));
-        assertTrue(detachment.isPresent());
-        List<Unit> unitsForDetach = detachment.get().getUnits();
-        assertEquals(unitsForDetach.size(), 1);
-        assertEquals(unitsForDetach.get(0), unit);
-
-        service.deleteUnitsForDetachment(TestConstants.detachmentId, TestConstants.armyId);
-
-        detachment = Optional.ofNullable(service.getFullDetachment(TestConstants.detachmentId));
-        assertTrue(detachment.isPresent());
-        unitsForDetach = detachment.get().getUnits();
-        assertEquals(0, unitsForDetach.size());
     }
 
     @Test
@@ -174,20 +146,7 @@ public class DetachmentServiceIT {
                 .build());
     }
 
-    private Unit makeTestUnit() {
-        return Unit.builder()
-                .id(TestConstants.unitId)
-                .unitType(UnitType.builder()
-                        .unit_type_id(TestConstants.unitTypeId)
-                        .name(TestConstants.unitTypeName)
-                        .powerPoints(11)
-                        .build())
-                .unitTypeId(TestConstants.unitTypeId)
-                .name(faker.lorem().word())
-                .detachmentId(TestConstants.detachmentId)
-                .build();
-    }
-
     //endregion
 
 }
+
