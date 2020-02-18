@@ -34,9 +34,13 @@ public class DetachmentController {
         this.authorizationService = authorizationService;
     }
 
-    @Operation(description = "Gets all detachments for the given army. If getFullDetachments flag is set to true, each detachment will be listed with its associated units")
+    @Operation(description = "Gets all detachments for the given army. " +
+            "If getFullDetachments flag is set to true, each detachment will be listed with its associated units")
     @GetMapping("/{armyId}")
-    public ResponseEntity<List<?>> getDetachmentsForArmy(@PathVariable UUID armyId, @RequestParam(defaultValue = "false") boolean getFullDetachments, Principal principal) throws ValidationException{
+    public ResponseEntity<List<?>> getDetachmentsForArmy(
+            @PathVariable UUID armyId,
+            @RequestParam(defaultValue = "false") boolean getFullDetachments,
+            Principal principal) throws ValidationException, PersistenceException {
         if(principal != null) {
             authorizationService.validatePrincipalArmy(principal, armyId);
         }
@@ -50,7 +54,8 @@ public class DetachmentController {
 
     @Operation(description = "Gets a single detachment with its associated units")
     @GetMapping("/{detachmentId}")
-    public ResponseEntity<Detachment> getDetachment(@PathVariable UUID detachmentId, Principal principal) throws PersistenceException, ValidationException {
+    public ResponseEntity<Detachment> getDetachment(@PathVariable UUID detachmentId, Principal principal)
+            throws PersistenceException, ValidationException {
         if(principal != null) {
             authorizationService.validatePrincipalDetachment(principal, detachmentId);
         }
@@ -66,7 +71,8 @@ public class DetachmentController {
     @Operation(description = "Adds a detachment to the given army")
     @PostMapping
     public ResponseEntity<?> addDetachmentToArmy(
-            @RequestParam UUID armyId, @RequestBody DetachmentDTO detachment, Principal principal) throws PersistenceException, ValidationException {
+            @RequestParam UUID armyId, @RequestBody DetachmentDTO detachment, Principal principal)
+            throws PersistenceException, ValidationException {
         if(principal != null) {
             authorizationService.validatePrincipalArmy(principal, armyId);
         }
@@ -78,7 +84,8 @@ public class DetachmentController {
     @Operation(description = "Edits a detachment's properties")
     @PatchMapping("/{detachmentId}")
     public ResponseEntity<?> editDetachment(
-            @RequestParam UUID armyId, @RequestBody DetachmentPatchRequestDTO dto, Principal principal) throws NoSuchFieldException, ValidationException {
+            @RequestParam UUID armyId, @RequestBody DetachmentPatchRequestDTO dto, Principal principal)
+            throws NoSuchFieldException, ValidationException, PersistenceException {
         if(principal != null) {
             authorizationService.validatePrincipalArmy(principal, armyId);
         }
@@ -88,7 +95,8 @@ public class DetachmentController {
 
     @Operation(description = "Deletes a detachment and its associated units")
     @DeleteMapping("/deleteDetachment/{armyId}/{detachmentId}")
-    public ResponseEntity<?> deleteDetachment(@PathVariable UUID armyId, @PathVariable UUID detachmentId, Principal principal) throws NotFoundException, ValidationException {
+    public ResponseEntity<?> deleteDetachment(@PathVariable UUID armyId, @PathVariable UUID detachmentId, Principal principal)
+            throws NotFoundException, ValidationException, PersistenceException {
         if(principal != null) {
             authorizationService.validatePrincipalArmy(principal, armyId);
         }

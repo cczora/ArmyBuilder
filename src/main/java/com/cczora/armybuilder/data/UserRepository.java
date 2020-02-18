@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<Account, String> {
 
-    @Query(value = "select a.username, a.password, a.profilePicUrl from Account a where a.username in (select distinct a.username from Army a where a.army_id = :armyId)")
+    @Query(value = "select a.username, a.password, a.profilePicUrl from Account a where a.username in (select distinct a.username from Army a where a.id = :armyId)")
     Optional<Account> findAccountByArmyId(@Param("armyId") UUID armyId);
 
     @Query(value = "select a.username, a.password, a.profile_pic_url from Account a " +

@@ -1,34 +1,34 @@
- package com.cczora.armybuilder.models.entity;
+package com.cczora.armybuilder.models.entity;
 
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
- @Entity
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
- @Builder
- public class Account implements Serializable {
+@Builder
+public class Account implements Serializable {
 
-     private static final long serialVersionUID = -6407324986805263828L;
+    private static final long serialVersionUID = -6407324986805263828L;
 
-     @Id
-     private String username;
+    @Id
+    private String username;
 
     @NotNull
-    @Column(nullable = false)
-     private String password;
+    @Column
+    private String password;
 
     @Column(name = "profile_pic_url")
-     private String profilePicUrl;
+    private String profilePicUrl;
 
-    @OneToMany
-    @JoinTable(name = "army")
-     List<Army> armies;
+    @Transient
+    private List<Army> armies = new ArrayList<>();
 
- }
+}

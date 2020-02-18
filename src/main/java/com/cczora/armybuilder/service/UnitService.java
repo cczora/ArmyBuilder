@@ -1,5 +1,6 @@
 package com.cczora.armybuilder.service;
 
+import com.cczora.armybuilder.data.DetachmentRepository;
 import com.cczora.armybuilder.data.UnitRepository;
 import com.cczora.armybuilder.data.UnitTypeRepository;
 import com.cczora.armybuilder.models.entity.Unit;
@@ -16,12 +17,14 @@ import java.util.UUID;
 @Slf4j
 @NoArgsConstructor
 public class UnitService {
-    
+
+    private DetachmentRepository detachmentRepo;
     private UnitRepository unitRepo;
     private UnitTypeRepository unitTypeRepo;
 
     @Autowired
-    public UnitService(UnitRepository unitRepo, UnitTypeRepository unitTypeRepo) {
+    public UnitService(DetachmentRepository detachmentRepo, UnitRepository unitRepo, UnitTypeRepository unitTypeRepo) {
+        this.detachmentRepo = detachmentRepo;
         this.unitRepo = unitRepo;
         this.unitTypeRepo = unitTypeRepo;
     }
@@ -35,8 +38,8 @@ public class UnitService {
     }
 
     public Unit addUnit(Unit unitToAdd, UUID detachmentId, UUID armyId) {
-        if(unitToAdd.getUnit_Id() == null) {
-            unitToAdd.setUnit_Id(UUID.randomUUID());
+        if(unitToAdd.getDetachmentId() == null) {
+            unitToAdd.setId(UUID.randomUUID());
         }
         unitToAdd.setDetachmentId(detachmentId);
         unitRepo.save(unitToAdd);

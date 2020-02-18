@@ -45,7 +45,7 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Error> handleNotFoundException(NotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(
                 Error.builder()
-                        .message(ex.getMessage())
+                        .message(ex.getMessage() + "not found.")
                         .timestamp(LocalDateTime.now())
                         .build(),
                 HttpStatus.NOT_FOUND);

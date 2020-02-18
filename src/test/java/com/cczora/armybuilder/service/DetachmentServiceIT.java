@@ -4,8 +4,10 @@ import com.cczora.armybuilder.TestConstants;
 import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.data.fields.DetachmentFieldsRepository;
 import com.cczora.armybuilder.models.KeyValuePair;
+import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.DetachmentDTO;
 import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
+import com.cczora.armybuilder.models.entity.Account;
 import com.cczora.armybuilder.models.entity.Army;
 import com.cczora.armybuilder.models.entity.FactionType;
 import com.cczora.armybuilder.models.mapping.DetachmentMapper;
@@ -37,23 +39,18 @@ public class DetachmentServiceIT {
         this.armyRepo = armyRepo;
         this.detachmentRepo = detachmentRepo;
         this.unitRepo = unitRepo;
-        this.service = new DetachmentService(detachmentRepo, mapper, detachmentTypeRepo, detachmentFieldsRepo, factionTypeRepo, unitRepo);
+        this.service = new DetachmentService(armyRepo, detachmentRepo, mapper, detachmentTypeRepo, detachmentFieldsRepo, factionTypeRepo, unitRepo);
     }
 
     @BeforeEach
     public void cleanupAddTestArmy() {
-        detachmentRepo.deleteAll();
-        unitRepo.deleteAll();
-        armyRepo.deleteAll();
-
-        armyRepo.save(Army.builder()
-                .army_id(TestConstants.armyId)
-                .name(faker.lorem().word())
-                .username(TestConstants.username)
-                .sizeClass("small")
-                .faction(FactionType.builder().factionTypeId(TestConstants.factionTypeId).name(TestConstants.factionTypeName).build())
-                .build());
+        if(armyRepo.findAll().size() > 0) {
+            armyRepo.deleteAll();
+        }
+        addTestArmy();
     }
+
+
 
     @Test
     public void DetachmentCRUD() throws Exception {
@@ -107,6 +104,17 @@ public class DetachmentServiceIT {
                 .name(faker.funnyName().name())
                 .notes(faker.princessBride().quote())
                 .build();
+    }
+
+    private void addTestArmy() {
+        armyRepo.save(Army.builder()
+                .name(faker.lorem().word())
+                .notes(faker.ancient().primordial())
+                .id(TestConstants.armyId)
+                .username(TestConstants.username)
+                .factionTypeId(TestConstants.factionTypeId)
+                .sizeClass("small")
+                .build());
     }
 
     //endregion

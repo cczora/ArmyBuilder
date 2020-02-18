@@ -11,12 +11,16 @@ import com.cczora.armybuilder.models.entity.FactionType;
 import com.cczora.armybuilder.models.entity.Unit;
 import com.cczora.armybuilder.models.mapping.ArmyMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,50 +59,53 @@ public class ArmyService {
         return armyRepo.findById(armyId).isPresent() ? armyRepo.findById(armyId).get() : new Army();
     }
 
-    public List<ArmyDTO> getArmiesByUsername(String username) {
-        List<Army> armies = armyRepo.findAllByUsername(username);
-        return armies.stream().map(mapper::armyToArmyDTO).collect(Collectors.toList());
+    public List<ArmyDTO> getArmiesByUsername(String username) throws NotFoundException {
+        Optional<List<Army>> armies = Optional.ofNullable(armyRepo.findArmiesByUsername(username));
+        if(armies.isPresent()) {
+            return armies.get().stream().map(mapper::armyToArmyDTO).collect(Collectors.toList());
+        }
+        else {
+            String message = String.format("User %s has no armies", username);
+            log.error("Error getting armies for user {}: {}", username, message);
+            throw new NotFoundException(message);
+        }
     }
 
-    public ArmyDTO addArmy(ArmyDTO army, String username) throws PersistenceException {
-        try {
-            log.debug("Adding army {} for user {}", army.getName(), username);
-            FactionType faction = factionRepo.findFactionTypeByName(army.getFactionName());
-            Army armyEntity = mapper.armyDTOToArmy(army, username);
-            armyEntity.setArmy_id(UUID.randomUUID());
-            armyEntity.setCommandPoints(3);
-            armyEntity.setUsername(username);
-            armyEntity = armyRepo.save(armyEntity);
-            log.debug("Successfully added army {}", armyEntity.getArmy_id());
-            return mapper.armyToArmyDTO(armyEntity);
+    public ArmyDTO addArmy(@Valid ArmyDTO army, String username) throws NotFoundException, ValidationException, DataAccessException {
+        if(Optional.ofNullable(factionRepo.findFactionTypeByName(army.getFactionName())).isEmpty()) {
+            throw new NotFoundException(String.format("Faction %s not found.", army.getFactionName()));
         }
-        catch(DataAccessException e) {
-            log.error("Error adding army {}: {}", army.getName(), e);
-            throw new PersistenceException(e.getMessage(), e);
+        Army armyEntity = mapper.armyDTOToArmy(army, username);
+        if(army.getArmyId() == null) {
+            armyEntity.setId(UUID.randomUUID());
         }
+        armyEntity.setCommandPoints(3);
+        armyEntity.setUsername(username);
+        armyEntity = armyRepo.save(armyEntity);
+        return mapper.armyToArmyDTO(armyEntity);
     }
 
     @Transactional
-    public void deleteArmyById(UUID id) throws Exception {
+    public void deleteArmyById(UUID id) throws PersistenceException {
         log.debug("Deleting army {}", id);
         try {
             List<Detachment> detachments = detachmentRepo.findAllByArmyId(id);
             detachmentRepo.deleteAll(detachments);
 
             for(Detachment d : detachments) {
-                List<Unit> units = unitRepo.findAllByDetachmentId(d.getDetachmentId());
+                List<Unit> units = unitRepo.findAllByDetachmentId(d.getId());
                 unitRepo.deleteAll(units);
             }
             armyRepo.deleteById(id);
             log.debug("Successfully deleted army {}", id);
         }
-        catch(Exception e) {
-            log.error("Error deleting army: {}", e.getMessage());
-            throw new Exception(e.getMessage(), e);
+        catch(DataAccessException e) {
+            log.error("Error deleting army {}: {}", id, e.getMessage());
+            throw new PersistenceException(e.getMessage(), e);
         }
     }
 
-    public void editArmy(ArmyPatchRequestDTO armyUpdates) throws Exception {
+    public void editArmy(ArmyPatchRequestDTO armyUpdates) throws PersistenceException, NoSuchFieldException, NotFoundException {
         try {
             Map<String, Object> updates = AppConstants.checkRequiredFieldsForPatch(armyFieldsRepo, armyUpdates.getUpdates());
             Optional<Army> currentArmy = armyRepo.findById(armyUpdates.getArmyId());
@@ -114,13 +121,16 @@ public class ArmyService {
                             break;
                         case "faction_type_id":
                             String newFaction = updates.get(field).toString();
+                            if(Optional.ofNullable(factionRepo.findFactionTypeByName(newFaction)).isEmpty()) {
+                                throw new NotFoundException(String.format("Faction %s not found.", newFaction));
+                            }
                             if(!currArmy.getFaction().getName().equals(newFaction)) {
                                 currArmy.setFaction(factionRepo.findFactionTypeByName(newFaction));
                             }
                             break;
                         case "commandPoints":
                             int newCP = Integer.parseInt(updates.get(field).toString());
-                            if(currArmy.getCommandPoints() != newCP) {
+                            if(currArmy.getCommandPoints() != newCP && newCP > 0) {
                                 currArmy.setCommandPoints(newCP);
                             }
                             break;
@@ -144,8 +154,8 @@ public class ArmyService {
             }
         }
         catch(Exception e) {
-            log.error("Error editing armyUpdates {}: {}", armyUpdates.getArmyId(), e.getMessage());
-            throw new Exception(e);
+            log.error("Error editing army {}: {}", armyUpdates.getArmyId(), e.getMessage());
+            throw e;
         }
     }
 }

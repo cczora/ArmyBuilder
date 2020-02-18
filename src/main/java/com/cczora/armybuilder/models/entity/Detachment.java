@@ -20,8 +20,7 @@ public class Detachment implements Serializable {
     private static final long serialVersionUID = -3798228120704087633L;
 
     @Id
-    @Column(name = "detachment_id")
-    private UUID detachmentId;
+    private UUID id;
 
     @Column(name = "army_id")
     private UUID armyId;
@@ -48,8 +47,7 @@ public class Detachment implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Detachment that = (Detachment) o;
-        return armyId.equals(that.armyId) &&
-                Objects.equals(detachmentId, that.detachmentId) &&
+        return Objects.equals(id, that.id) &&
                 Objects.equals(detachmentType, that.detachmentType) &&
                 Objects.equals(faction, that.faction) &&
                 Objects.equals(name, that.name) &&
@@ -59,6 +57,7 @@ public class Detachment implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(detachmentId, armyId, detachmentType, faction, name, notes, units);
+        return Objects.hash(id, detachmentType, faction, name, notes, units);
     }
+
 }

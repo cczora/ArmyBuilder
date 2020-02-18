@@ -24,13 +24,13 @@ public class ArmyMapper {
                 .sizeClass(dto.getSizeClass())
                 .username(username)
                 .name(dto.getName())
-                .army_id(dto.getArmyId())
+                .id(dto.getArmyId())
                 .build();
     }
 
     public ArmyDTO armyToArmyDTO(Army army) {
         return ArmyDTO.builder()
-                .armyId(army.getArmy_id())
+                .armyId(army.getId())
                 .notes(army.getNotes())
                 .factionName(army.getFaction().getName())
                 .sizeClass(army.getSizeClass())

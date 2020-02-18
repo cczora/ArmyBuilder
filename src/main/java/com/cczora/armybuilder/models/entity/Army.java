@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,27 +19,31 @@ public class Army implements Serializable {
     private static final long serialVersionUID = 2242079497393722021L;
 
     @Id
-    private UUID army_id;
+    private UUID id;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String username;
 
-    @ManyToOne
-    @JoinColumn(name = "faction_type_id", nullable = false)
+    @Transient
     private FactionType faction;
+
+    @Column(name = "faction_type_id")
+    private UUID factionTypeId;
 
     @Column(name = "command_points")
     @Builder.Default
     private int commandPoints = 3;
 
-    @Column(name = "size", nullable = false)
+    @Column(name = "size")
     private String sizeClass;
 
     @Column
     private String notes;
 
-    //TODO: add create/modify date to entities
+    @Transient
+    private List<Detachment> detachmentList;
+
 }
