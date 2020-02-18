@@ -7,6 +7,7 @@ import com.cczora.armybuilder.models.dto.DetachmentDTO;
 import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
 import com.cczora.armybuilder.models.entity.Detachment;
 import com.cczora.armybuilder.models.entity.DetachmentType;
+import com.cczora.armybuilder.models.entity.FactionType;
 import com.cczora.armybuilder.models.entity.Unit;
 import com.cczora.armybuilder.models.mapping.DetachmentMapper;
 import com.google.common.collect.Lists;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import java.util.List;
@@ -77,7 +79,7 @@ public class DetachmentService {
         return detachment.get();
     }
 
-    public void addDetachment(DetachmentDTO detachment) throws PersistenceException {
+    public void addDetachment(DetachmentDTO detachment) throws PersistenceException, NotFoundException {
         try {
             if(Optional.ofNullable(factionRepo.findFactionTypeByName(detachment.getFactionName())).isEmpty()) {
                 throw new NotFoundException(String.format("Faction %s not found.", detachment.getFactionName()));
@@ -99,7 +101,7 @@ public class DetachmentService {
         }
     }
 
-    public void editDetachment(DetachmentPatchRequestDTO dto) throws NoSuchFieldException {
+    public void editDetachment(DetachmentPatchRequestDTO dto) throws PersistenceException, NoSuchFieldException, NotFoundException {
         try {
             Map<String, Object> updates = AppConstants.checkRequiredFieldsForPatch(detachmentFieldsRepo, dto.getUpdates());
             Optional<Detachment> currentDetachment = detachmentRepository.findById(dto.getDetachmentId());
@@ -115,8 +117,12 @@ public class DetachmentService {
                             break;
                         case "faction_type_id":
                             String newFaction = updates.get(field).toString();
-                            if (!currDetach.getFaction().getName().equals(newFaction)) {
-                                currDetach.setFaction(factionRepo.findFactionTypeByName(newFaction));
+                            if(Optional.ofNullable(factionRepo.findFactionTypeByName(newFaction)).isEmpty()) {
+                                throw new NotFoundException(String.format("Faction %s not found.", newFaction));
+                            }
+                            if(!factionRepo.findById(currDetach.getFaction().getFactionTypeId()).get().getName().equals(newFaction)) {
+                                FactionType newFT = factionRepo.findFactionTypeByName(newFaction);
+                                currDetach.setFaction(newFT);
                             }
                             break;
                         case "name":
@@ -138,9 +144,9 @@ public class DetachmentService {
                 detachmentRepository.save(currDetach);
             }
         }
-        catch(NoSuchFieldException e) {
+        catch(Exception e) {
             log.error("Error editing detachment {}: {}", dto.getDetachmentId(), e.getMessage());
-            throw new NoSuchFieldException(e.getMessage());
+            throw e;
         }
     }
 

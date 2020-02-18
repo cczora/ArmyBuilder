@@ -4,6 +4,8 @@ import com.cczora.armybuilder.TestConstants;
 import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.data.fields.DetachmentFieldsRepository;
 import com.cczora.armybuilder.models.KeyValuePair;
+import com.cczora.armybuilder.models.dto.ArmyDTO;
+import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
 import com.cczora.armybuilder.models.dto.DetachmentDTO;
 import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
 import com.cczora.armybuilder.models.entity.Army;
@@ -16,10 +18,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.webjars.NotFoundException;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -88,6 +93,39 @@ public class DetachmentServiceIT {
         service.deleteDetachment(testDetachment.getDetachmentId(), testDetachment.getArmyId());
         fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
         assertEquals(0, fromRepo.size());
+    }
+
+    @Test
+    public void addDetachment_invalidFaction() {
+        DetachmentDTO detachmentDTO = makeTestDetachmentDTO();
+        detachmentDTO.setFactionName("Invalid Faction");
+        assertThrows(NotFoundException.class, () -> service.addDetachment(detachmentDTO));
+    }
+
+    @Test
+    public void editDetachment_invalidPatchField() {
+        DetachmentPatchRequestDTO dto = DetachmentPatchRequestDTO.builder()
+                .detachmentId(TestConstants.detachmentId)
+                .updates(Collections.singletonList(KeyValuePair.builder()
+                        .key("Invalid Field")
+                        .value("Invalid Value")
+                        .build()))
+                .build();
+        assertThrows(NoSuchFieldException.class, () -> service.editDetachment(dto));
+    }
+
+    @Test
+    public void editDetachment_validPatchField_invalidValue() {
+        DetachmentDTO testDetachment = makeTestDetachmentDTO();
+        service.addDetachment(testDetachment);
+        DetachmentPatchRequestDTO patchRequestDTO = DetachmentPatchRequestDTO.builder()
+                .detachmentId(TestConstants.detachmentId)
+                .updates(Collections.singletonList(KeyValuePair.builder()
+                        .key("faction_type_id")
+                        .value("Invalid Value")
+                        .build()))
+                .build();
+        assertThrows(NotFoundException.class, () -> service.editDetachment(patchRequestDTO));
     }
 
     //region private methods
