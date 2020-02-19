@@ -8,6 +8,8 @@ import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
 import com.cczora.armybuilder.models.entity.*;
 import com.cczora.armybuilder.models.mapping.DetachmentMapper;
 import com.google.common.collect.Lists;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -23,15 +25,16 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@NoArgsConstructor
 public class DetachmentService {
 
-    private final ArmyRepository armyRepo;
-    private final DetachmentRepository detachmentRepository;
+    private ArmyRepository armyRepo;
+    private DetachmentRepository detachmentRepository;
     private DetachmentMapper mapper;
-    private final DetachmentTypeRepository detachmentTypeRepo;
-    private final DetachmentFieldsRepository detachmentFieldsRepo;
-    private final FactionTypeRepository factionRepo;
-    private final UnitRepository unitRepo;
+    private DetachmentTypeRepository detachmentTypeRepo;
+    private DetachmentFieldsRepository detachmentFieldsRepo;
+    private FactionTypeRepository factionRepo;
+    private UnitRepository unitRepo;
     private UnitTypeRepository unitTypeRepo;
 
     @Autowired

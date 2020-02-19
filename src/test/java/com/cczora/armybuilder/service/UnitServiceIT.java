@@ -3,16 +3,21 @@ package com.cczora.armybuilder.service;
 import com.cczora.armybuilder.TestConstants;
 import com.cczora.armybuilder.data.*;
 import com.cczora.armybuilder.data.fields.DetachmentFieldsRepository;
+import com.cczora.armybuilder.data.fields.UnitFieldsRepo;
 import com.cczora.armybuilder.models.KeyValuePair;
 import com.cczora.armybuilder.models.dto.DetachmentDTO;
-import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
-import com.cczora.armybuilder.models.entity.Army;
+import com.cczora.armybuilder.models.dto.UnitDTO;
+import com.cczora.armybuilder.models.dto.UnitPatchRequestDTO;
+import com.cczora.armybuilder.models.entity.*;
 import com.cczora.armybuilder.models.mapping.DetachmentMapper;
+import com.cczora.armybuilder.models.mapping.UnitMapper;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,52 +25,81 @@ import org.webjars.NotFoundException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 public class UnitServiceIT {
 
-    private ArmyRepository armyRepo;
-    private DetachmentService service;
+    @Mock
+    private ArmyRepository armyRepoMock;
+    @Mock
+    private DetachmentService detachmentServiceMock;
+    @Mock
+    private DetachmentRepository detachmentRepoMock;
+    @Mock
+    private DetachmentMapper detachmentMapperMock;
+    @Mock
+    private DetachmentTypeRepository detachmentTypeRepoMock;
+    @Mock
+    private DetachmentFieldsRepository detachmentFieldsRepoMock;
+
+    private UnitService service;
+    private UnitRepository unitRepo;
     private Faker faker = new Faker();
 
     @Autowired
-    public UnitServiceIT(ArmyRepository armyRepo, DetachmentRepository detachmentRepo, DetachmentMapper mapper, DetachmentTypeRepository detachmentTypeRepo, DetachmentFieldsRepository detachmentFieldsRepo, FactionTypeRepository factionTypeRepo, UnitRepository unitRepo, UnitTypeRepository unitTypeRepo) {
-        this.armyRepo = armyRepo;
-        this.service = new DetachmentService(armyRepo, detachmentRepo, mapper, detachmentTypeRepo, detachmentFieldsRepo, factionTypeRepo, unitRepo, unitTypeRepo);
+    public UnitServiceIT(UnitRepository unitRepo, UnitTypeRepository unitTypeRepo, UnitFieldsRepo unitFieldsRepo, UnitMapper unitMapper, DetachmentService detachmentService, FactionTypeRepository factionRepo) {
+        this.unitRepo = unitRepo;
+        MockitoAnnotations.initMocks(this);
+        this.detachmentServiceMock = new DetachmentService(armyRepoMock, detachmentRepoMock, detachmentMapperMock,
+                detachmentTypeRepoMock, detachmentFieldsRepoMock,
+                factionRepo, unitRepo, unitTypeRepo);
+        this.service = new UnitService(detachmentRepoMock, detachmentService, unitRepo, unitMapper, unitTypeRepo, unitFieldsRepo);
+        when(armyRepoMock.save(any(Army.class))).thenReturn(Army.builder()
+                .name(faker.lorem().word())
+                .notes(faker.ancient().primordial())
+                .id(TestConstants.armyId)
+                .username(TestConstants.username)
+                .factionTypeId(TestConstants.factionTypeId)
+                .sizeClass("small")
+                .build());
+        when(detachmentRepoMock.findArmyIdForDetachment(any(UUID.class))).thenReturn(TestConstants.armyId);
+        when(detachmentRepoMock.findById(any(UUID.class))).thenReturn(Optional.of(makeTestDetachment()));
+        when(detachmentServiceMock.getDetachmentsByArmyId(any(UUID.class))).thenReturn(Collections.singletonList(makeTestDetachmentDTO()));
     }
 
+    @Autowired
+
+
+
     @BeforeEach
-    public void cleanupAddTestArmy() {
-        if(armyRepo.findAll().size() > 0) {
-            armyRepo.deleteAll();
-        }
-        addTestArmy();
+    public void cleanup() {
+        unitRepo.deleteAll();
     }
 
 
 
     @Test
-    public void DetachmentCRUD() throws Exception {
-        DetachmentDTO testDetachment = makeTestDetachmentDTO();
-        service.addDetachment(testDetachment);
-        List<DetachmentDTO> fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
+    public void UnitCRUD() throws Exception {
+        UnitDTO testUnit = makeTestUnitDTO();
+        service.addUnit(testUnit, TestConstants.armyId);
+        List<UnitDTO> fromRepo = service.getUnitsForDetachment(TestConstants.detachmentId);
         assertEquals(1, fromRepo.size());
-        assertEquals(testDetachment, fromRepo.get(0));
+        assertEquals(testUnit, fromRepo.get(0));
 
-        service.editDetachment(DetachmentPatchRequestDTO.builder()
-                .detachmentId(testDetachment.getDetachmentId())
+        service.editUnit(UnitPatchRequestDTO.builder()
+                .unitId(testUnit.getId())
                 .updates(Lists.newArrayList(
                         KeyValuePair.builder()
-                                .key("detachment_type_id")
-                                .value(TestConstants.updatedDetachmentTypeName)
-                                .build(),
-                        KeyValuePair.builder()
-                                .key("faction_type_id")
-                                .value(TestConstants.updatedFaction)
+                                .key("unit_type_id")
+                                .value(TestConstants.updatedUnitTypeName)
                                 .build(),
                         KeyValuePair.builder()
                                 .key("name")
@@ -77,52 +111,61 @@ public class UnitServiceIT {
                                 .build()))
                 .build());
 
-        fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
+        fromRepo = service.getUnitsForDetachment(TestConstants.detachmentId);
         assertEquals(1, fromRepo.size());
-        assertEquals(TestConstants.updatedDetachmentTypeName, fromRepo.get(0).getDetachmentType());
-        assertEquals(TestConstants.updatedFaction, fromRepo.get(0).getFactionName());
+        assertEquals(TestConstants.updatedUnitTypeName, fromRepo.get(0).getUnitType());
         assertEquals(TestConstants.updatedName, fromRepo.get(0).getName());
         assertEquals(TestConstants.updatedNotes, fromRepo.get(0).getNotes());
 
-        service.deleteDetachment(testDetachment.getDetachmentId(), testDetachment.getArmyId());
-        fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
+        service.deleteUnitById(testUnit.getId(), TestConstants.detachmentId);
+        fromRepo = service.getUnitsForDetachment(TestConstants.detachmentId);
         assertEquals(0, fromRepo.size());
     }
 
     @Test
-    public void addDetachment_invalidFaction() {
-        DetachmentDTO detachmentDTO = makeTestDetachmentDTO();
-        detachmentDTO.setFactionName("Invalid Faction");
-        assertThrows(NotFoundException.class, () -> service.addDetachment(detachmentDTO));
+    public void addUnit_invalidUnitType() {
+        UnitDTO unitDTO = makeTestUnitDTO();
+        unitDTO.setUnitType("Invalid Unit Type");
+        assertThrows(NotFoundException.class, () -> service.addUnit(unitDTO, TestConstants.armyId));
     }
 
     @Test
-    public void editDetachment_invalidPatchField() {
-        DetachmentPatchRequestDTO dto = DetachmentPatchRequestDTO.builder()
-                .detachmentId(TestConstants.detachmentId)
+    public void editUnit_invalidPatchField() {
+        UnitPatchRequestDTO dto = UnitPatchRequestDTO.builder()
+                .unitId(TestConstants.unitId)
                 .updates(Collections.singletonList(KeyValuePair.builder()
                         .key("Invalid Field")
                         .value("Invalid Value")
                         .build()))
                 .build();
-        assertThrows(NoSuchFieldException.class, () -> service.editDetachment(dto));
+        assertThrows(NoSuchFieldException.class, () -> service.editUnit(dto));
     }
 
     @Test
-    public void editDetachment_validPatchField_invalidValue() {
-        DetachmentDTO testDetachment = makeTestDetachmentDTO();
-        service.addDetachment(testDetachment);
-        DetachmentPatchRequestDTO patchRequestDTO = DetachmentPatchRequestDTO.builder()
-                .detachmentId(TestConstants.detachmentId)
+    public void editUnit_validPatchField_invalidValue() {
+        UnitDTO testUnit = makeTestUnitDTO();
+        service.addUnit(testUnit, TestConstants.armyId);
+        UnitPatchRequestDTO patchRequestDTO = UnitPatchRequestDTO.builder()
+                .unitId(TestConstants.unitId)
                 .updates(Collections.singletonList(KeyValuePair.builder()
-                        .key("faction_type_id")
+                        .key("unit_type_id")
                         .value("Invalid Value")
                         .build()))
                 .build();
-        assertThrows(NotFoundException.class, () -> service.editDetachment(patchRequestDTO));
+        assertThrows(NotFoundException.class, () -> service.editUnit(patchRequestDTO));
     }
 
     //region private methods
+
+    private UnitDTO makeTestUnitDTO() {
+        return UnitDTO.builder()
+                .id(TestConstants.unitId)
+                .unitType(TestConstants.unitTypeName)
+                .name(faker.lorem().word())
+                .detachmentId(TestConstants.detachmentId)
+                .notes(faker.cat().name())
+                .build();
+    }
 
     private DetachmentDTO makeTestDetachmentDTO() {
         return DetachmentDTO.builder()
@@ -135,15 +178,22 @@ public class UnitServiceIT {
                 .build();
     }
 
-    private void addTestArmy() {
-        armyRepo.save(Army.builder()
-                .name(faker.lorem().word())
-                .notes(faker.ancient().primordial())
-                .id(TestConstants.armyId)
-                .username(TestConstants.username)
-                .factionTypeId(TestConstants.factionTypeId)
-                .sizeClass("small")
-                .build());
+    private Detachment makeTestDetachment() {
+        return Detachment.builder()
+                .id(TestConstants.detachmentId)
+                .armyId(TestConstants.armyId)
+                .detachmentType(DetachmentType.builder()
+                        .detachmentTypeId(TestConstants.detachmentTypeId)
+                        .name(TestConstants.detachmentTypeName)
+                        .commandPoints(3)
+                        .build())
+                .faction(FactionType.builder()
+                        .factionTypeId(TestConstants.factionTypeId)
+                        .name(TestConstants.factionTypeName)
+                        .build())
+                .name(faker.funnyName().name())
+                .notes(faker.princessBride().quote())
+                .build();
     }
 
     //endregion

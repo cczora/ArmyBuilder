@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import javax.persistence.PersistenceException;
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,28 +59,32 @@ public class UnitService {
         return unitTypeRepo.findAll();
     }
 
-    public UnitDTO addUnit(UnitDTO unitToAdd, UUID detachmentId, UUID armyId) throws DataAccessException, NotFoundException {
+    public UnitDTO addUnit(UnitDTO unitToAdd, UUID armyId) throws DataAccessException, NotFoundException {
         try {
-            if (detachmentRepo.findById(detachmentId).isPresent()
+            if (detachmentRepo.findById(unitToAdd.getDetachmentId()).isPresent()
                     && detachmentService.getDetachmentsByArmyId(armyId).stream()
                     .map(DetachmentDTO::getDetachmentId)
-                    .collect(Collectors.toList()).contains(detachmentId)) {
+                    .collect(Collectors.toList()).contains(unitToAdd.getDetachmentId())) {
                 if (unitToAdd.getId() == null) {
                     unitToAdd.setId(UUID.randomUUID());
                 }
-                unitToAdd.setDetachmentId(detachmentId);
-                Unit toAdd = mapper.dtoToEntity(unitToAdd);
-                toAdd = unitRepo.save(toAdd);
-                return mapper.entityToDTO(toAdd);
+                Optional<UnitType> typeToAdd = unitTypeRepo.findByName(unitToAdd.getUnitType());
+                if (typeToAdd.isEmpty()) {
+                    String message = String.format("Unit type %s not found.", unitToAdd.getUnitType());
+                    log.error(message);
+                    throw new NotFoundException(message);
+                }
+                Unit unitEntity = unitRepo.save(mapper.dtoToEntity(unitToAdd));
+                return mapper.entityToDTO(unitEntity);
             }
             else {
                 if(!detachmentService.getDetachmentsByArmyId(armyId).stream()
                         .map(DetachmentDTO::getDetachmentId)
-                        .collect(Collectors.toList()).contains(detachmentId)) {
-                    throw new NotFoundException(String.format("Detachment %s is not in army %s", detachmentId, armyId));
+                        .collect(Collectors.toList()).contains(unitToAdd.getDetachmentId())) {
+                    throw new NotFoundException(String.format("Detachment %s is not in army %s", unitToAdd.getDetachmentId(), armyId));
                 }
                 else {
-                    throw new NotFoundException(String.format("Detachment %s not found", detachmentId));
+                    throw new NotFoundException(String.format("Detachment %s not found", unitToAdd.getDetachmentId()));
                 }
             }
         }
@@ -100,11 +105,12 @@ public class UnitService {
                         case "unit_type_id":
                             String newType = updates.get(field).toString();
                             Optional<UnitType> typeInDB = unitTypeRepo.findByName(newType);
-                            if(typeInDB.isEmpty()) {
+                            if(typeInDB.isEmpty() || unitTypeRepo.findById(currUnit.getUnitTypeId()).isEmpty()) {
                                 throw new NotFoundException(String.format("Unit type %s not found.", newType));
                             }
-                            if(!typeInDB.get().getName().equals(newType)) {
+                            if(!unitTypeRepo.findById(currUnit.getUnitTypeId()).get().getName().equals(newType)) {
                                 currUnit.setUnitType(typeInDB.get());
+                                currUnit.setUnitTypeId(typeInDB.get().getUnit_type_id());
                             }
                             break;
                         case "name":
@@ -134,7 +140,7 @@ public class UnitService {
 
     public void deleteUnitById(UUID unitId, UUID detachmentId) {
         boolean isInDetachment = unitRepo.findAllByDetachmentId(detachmentId).stream()
-                .anyMatch(u -> u.getId().equals(detachmentId));
+                .anyMatch(u -> u.getId().equals(unitId));
         if(!isInDetachment) {
             log.error("Unit {} not found in detachment {}", unitId, detachmentId);
             throw new NotFoundException(String.format("Unit %s not found in detachment %s", unitId, detachmentId));

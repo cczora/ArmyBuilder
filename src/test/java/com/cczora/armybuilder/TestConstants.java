@@ -1,5 +1,7 @@
 package com.cczora.armybuilder;
 
+import com.cczora.armybuilder.models.entity.DetachmentType;
+
 import java.util.UUID;
 
 public class TestConstants {
@@ -14,6 +16,8 @@ public class TestConstants {
     public final static String updatedFaction = "Tau Empire";
     public final static String updatedSize = "medium";
     public final static String updatedNotes = "updated notes";
+    public final static String updatedUnitTypeName = "Fast Attack";
+    public final static UUID updatedUnitTypeId = UUID.fromString("bd4ef865-01fc-4f02-bcdd-3ed1d22232c2");
 
     public final static UUID detachmentId = UUID.fromString("25da53b3-476d-4d36-9b6f-66c69181a250");
     public final static UUID detachmentTypeId = UUID.fromString("65d6447a-9057-4187-b26b-a38cb018901d");

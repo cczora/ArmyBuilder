@@ -51,7 +51,7 @@ public class UnitController {
         if(principal != null) {
             authorizationService.validatePrincipalUnit(principal, unit.getId());
         }
-        UnitDTO newUnit = service.addUnit(unit, unit.getDetachmentId(), armyId);
+        UnitDTO newUnit = service.addUnit(unit, armyId);
         return ResponseEntity.ok(newUnit);
     }
 
