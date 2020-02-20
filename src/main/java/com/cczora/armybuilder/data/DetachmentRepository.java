@@ -14,6 +14,6 @@ public interface DetachmentRepository extends JpaRepository<Detachment, UUID> {
 
     List<Detachment> findAllByArmyId(UUID armyId);
 
-    @Query(value = "select distinct d.army_id from Detachment d where d.id = :detachmentId", nativeQuery = true)
+    @Query(value = "select distinct cast(d.army_id as varchar) from Detachment d where d.id = :detachmentId", nativeQuery = true)
     UUID findArmyIdForDetachment(@Param(value = "detachmentId") UUID detachmentId);
 }
