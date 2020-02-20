@@ -3,7 +3,6 @@ package com.cczora.armybuilder.controller;
 import com.cczora.armybuilder.config.AppConstants;
 import com.cczora.armybuilder.config.AuthorizationService;
 import com.cczora.armybuilder.config.AuthorizationServiceImpl;
-import com.cczora.armybuilder.config.exception.DuplicateUsernameException;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
 import com.cczora.armybuilder.service.ArmyService;

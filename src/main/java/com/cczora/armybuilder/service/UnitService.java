@@ -14,12 +14,10 @@ import com.cczora.armybuilder.models.mapping.UnitMapper;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import javax.persistence.PersistenceException;
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,39 +57,46 @@ public class UnitService {
         return unitTypeRepo.findAll();
     }
 
-    public UnitDTO addUnit(UnitDTO unitToAdd, UUID armyId) throws DataAccessException, NotFoundException {
+    public UnitDTO addUnit(UnitDTO unitToAdd) throws NotFoundException {
         try {
-            if (detachmentRepo.findById(unitToAdd.getDetachmentId()).isPresent()
-                    && detachmentService.getDetachmentsByArmyId(armyId).stream()
-                    .map(DetachmentDTO::getDetachmentId)
-                    .collect(Collectors.toList()).contains(unitToAdd.getDetachmentId())) {
-                if (unitToAdd.getId() == null) {
-                    unitToAdd.setId(UUID.randomUUID());
-                }
-                Optional<UnitType> typeToAdd = unitTypeRepo.findByName(unitToAdd.getUnitType());
-                if (typeToAdd.isEmpty()) {
-                    String message = String.format("Unit type %s not found.", unitToAdd.getUnitType());
+            Optional<UUID> armyId = Optional.ofNullable(detachmentService.findArmyIdForDetachment(unitToAdd.getDetachmentId()));
+            if (armyId.isPresent()) {
+                Optional<List<DetachmentDTO>> detachments = Optional.ofNullable(detachmentService.getDetachmentsByArmyId(armyId.get()));
+                if (detachments.isPresent()) {
+                    boolean isInDetachmentsForArmy = detachments.get().stream()
+                            .map(DetachmentDTO::getDetachmentId)
+                            .collect(Collectors.toList()).contains(unitToAdd.getDetachmentId());
+                    if (isInDetachmentsForArmy) {
+                        //validate unit type name, add random uuid and standard name if not given
+                        if (unitToAdd.getId() == null) unitToAdd.setId(UUID.randomUUID());
+                        Optional<UnitType> typeToAdd = unitTypeRepo.findByName(unitToAdd.getUnitType());
+                        if (typeToAdd.isEmpty()) {
+                            String message = String.format("Unit type %s not found.", unitToAdd.getUnitType());
+                            log.error(message);
+                            throw new NotFoundException(message);
+                        }
+                        //default name
+                        if (unitToAdd.getName() == null)
+                            unitToAdd.setName(String.format("New %s Unit", typeToAdd.get().getName()));
+                        Unit unitEntity = unitRepo.save(mapper.dtoToEntity(unitToAdd));
+                        return mapper.entityToDTO(unitEntity);
+                    }
+                } else { //no detachments
+                    String message = String.format("Detachment %s not found in army %s", unitToAdd.getDetachmentId(), armyId);
                     log.error(message);
                     throw new NotFoundException(message);
                 }
-                Unit unitEntity = unitRepo.save(mapper.dtoToEntity(unitToAdd));
-                return mapper.entityToDTO(unitEntity);
-            }
-            else {
-                if(!detachmentService.getDetachmentsByArmyId(armyId).stream()
-                        .map(DetachmentDTO::getDetachmentId)
-                        .collect(Collectors.toList()).contains(unitToAdd.getDetachmentId())) {
-                    throw new NotFoundException(String.format("Detachment %s is not in army %s", unitToAdd.getDetachmentId(), armyId));
-                }
-                else {
-                    throw new NotFoundException(String.format("Detachment %s not found", unitToAdd.getDetachmentId()));
-                }
+            } else { //no army!
+                String message = String.format("Unit %s is not part of an army!", unitToAdd.getId());
+                log.error(message);
+                throw new NotFoundException(message);
             }
         }
         catch(Exception e) {
             log.error("Error adding unit {}: {}", unitToAdd.getName(), e.getMessage());
             throw e;
         }
+        return null;
     }
 
     public void editUnit(UnitPatchRequestDTO dto) throws PersistenceException, NoSuchFieldException, NotFoundException {
@@ -141,11 +146,19 @@ public class UnitService {
     public void deleteUnitById(UUID unitId, UUID detachmentId) {
         boolean isInDetachment = unitRepo.findAllByDetachmentId(detachmentId).stream()
                 .anyMatch(u -> u.getId().equals(unitId));
-        if(!isInDetachment) {
+        if (!isInDetachment) {
             log.error("Unit {} not found in detachment {}", unitId, detachmentId);
             throw new NotFoundException(String.format("Unit %s not found in detachment %s", unitId, detachmentId));
         }
         unitRepo.deleteById(unitId);
     }
+
+    //region private methods
+
+    private Optional<UUID> findArmyIdForUnit(UUID id) {
+        return Optional.ofNullable(unitRepo.findArmyIdForUnit(id));
+    }
+
+    //endregion
 
 }

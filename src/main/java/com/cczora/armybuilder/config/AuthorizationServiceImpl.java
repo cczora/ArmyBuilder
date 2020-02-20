@@ -84,15 +84,15 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     public void validatePrincipalUnit(Principal principal, UUID unitId) throws ValidationException, NotFoundException {
         Optional<Account> user = userRepo.findAccountByUnitId(unitId);
         Optional<Detachment> detachmentForUnit = detachmentRepo.findById(unitRepo.findDetachmentIdForUnit(unitId));
-        UUID armyId = detachmentRepo.findArmyIdForDetachment(unitRepo.findDetachmentIdForUnit(unitId));
-        if(user.isPresent() && detachmentForUnit.isPresent() && !principal.getName().equals(armyRepo.findById(armyId).get().getUsername())) {
-            log.error(NOT_ALLOWED, principal.getName(), armyRepo.findById(armyId).get().getUsername());
+        Optional<UUID> armyId = Optional.ofNullable(unitRepo.findArmyIdForUnit(unitId));
+        if (armyId.isPresent() && user.isPresent() && detachmentForUnit.isPresent() && !principal.getName().equals(armyRepo.findById(armyId.get()).get().getUsername())) {
+            log.error(NOT_ALLOWED, principal.getName(), armyRepo.findById(armyId.get()).get().getUsername());
         }
-        if(user.isEmpty()) {
+        if (user.isEmpty()) {
             log.error("Unit {} is not associated with a user.", unitId);
             throw new NotFoundException("User for unit " + unitId.toString());
         }
-        if(detachmentForUnit.isEmpty()) {
+        if (detachmentForUnit.isEmpty()) {
             log.error("Unit {} is not associated with a detachment.", unitId);
             throw new NotFoundException("Detachment for unit " + unitId.toString());
         }

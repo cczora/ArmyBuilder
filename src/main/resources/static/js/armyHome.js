@@ -62,7 +62,7 @@ function loadArmies() {
                 switch (faction) {
                     // case "Chaos Marines":
                     case 1:
-                        html += `<div class="front">`
+                        html += `<div class="front">`;
                         html += "<img class='card-img-top factionImg' src='http://bakadesign.dk/backoffice/wp-content/uploads/2017/12/chaos-star-01.svg'>";
                         html += `<i class="fas fa-pen editArmyIcon"></i>`;
                         html += `<div class="card-body">`;
@@ -74,7 +74,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -135,7 +135,7 @@ function loadArmies() {
                         break;
                     // case "Chaos Demons":
                     case 2:
-                        html += `<div class="front">`
+                        html += `<div class="front">`;
                         html += "<img class='card-img-top factionImg' src='http://bakadesign.dk/backoffice/wp-content/uploads/2017/12/chaos-star-01.svg'>";
                         html += `<i class="fas fa-pen editArmyIcon"></i>`;
                         html += `<div class="card-body">`;
@@ -147,7 +147,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -208,7 +208,7 @@ function loadArmies() {
                         break;
                     // case "Drukhari":
                     case 3:
-                        html += `<div class="front">`
+                        html += `<div class="front">`;
                         html += "<img class='card-img-top factionImg' src='http://bakadesign.dk/backoffice/wp-content/uploads/2019/04/Dark-Eldar.svg'>";
                         html += `<i class="fas fa-pen editArmyIcon"></i>`;
                         html += `<div class="card-body">`;
@@ -220,7 +220,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -281,7 +281,7 @@ function loadArmies() {
                         break;
                     // case "Craftworld Eldar":
                     case 4:
-                        html += `<div class="front">`
+                        html += `<div class="front">`;
                         html += "<img class='card-img-top factionImg' src='http://bakadesign.dk/backoffice/wp-content/uploads/2019/04/Dark-Eldar.svg'>";
                         html += `<i class="fas fa-pen editArmyIcon"></i>`;
                         html += `<div class="card-body">`;
@@ -293,7 +293,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -354,7 +354,7 @@ function loadArmies() {
                         break;
                     // case "Harlequins":
                     case 5:
-                        html += `<div class="front">`
+                        html += `<div class="front">`;
                         html += "<img class='card-img-top factionImg' src='http://bakadesign.dk/backoffice/wp-content/uploads/2019/04/Dark-Eldar.svg'>";
                         html += `<i class="fas fa-pen editArmyIcon"></i>`;
                         html += `<div class="card-body">`;
@@ -366,7 +366,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -427,7 +427,7 @@ function loadArmies() {
                         break;
                     // case "Necrons":
                     case 6:
-                        html += `<div class="front">`
+                        html += `<div class="front">`;
                         html += "<img class='card-img-top factionImg' src='http://bakadesign.dk/backoffice/wp-content/uploads/2018/11/Necrons.svg'>";
                         html += `<i class="fas fa-pen editArmyIcon"></i>`;
                         html += `<div class="card-body">`;
@@ -439,7 +439,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -500,7 +500,7 @@ function loadArmies() {
                         break;
                     // case "Orks":
                     case 7:
-                        html += `<div class="front">`
+                        html += `<div class="front">`;
                         html += "<img class='card-img-top factionImg' src='http://bakadesign.dk/backoffice/wp-content/uploads/2018/11/Orks.svg'>";
                         html += `<i class="fas fa-pen editArmyIcon"></i>`;
                         html += `<div class="card-body">`;
@@ -512,7 +512,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -573,7 +573,7 @@ function loadArmies() {
                         break;
                     // case "T'au Empire":
                     case 8:
-                        html += `<div class="front">`
+                        html += `<div class="front">`;
                         html += "<img class='card-img-top factionImg' src='http://bakadesign.dk/backoffice/wp-content/uploads/2018/11/Tau.svg'>";
                         html += `<i class="fas fa-pen editArmyIcon"></i>`;
                         html += `<div class="card-body">`;
@@ -585,7 +585,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -646,7 +646,7 @@ function loadArmies() {
                         break;
                     // case "Tyranids":
                     case 9:
-                        html += `<div class="front">`
+                        html += `<div class="front">`;
                         html += "<img class='card-img-top factionImg' src='http://bakadesign.dk/backoffice/wp-content/uploads/2018/10/tyranid.svg'>";
                         html += `<i class="fas fa-pen editArmyIcon"></i>`;
                         html += `<div class="card-body">`;
@@ -658,7 +658,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -731,7 +731,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -804,7 +804,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -877,7 +877,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -950,7 +950,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -1023,7 +1023,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -1096,7 +1096,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -1169,7 +1169,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -1242,7 +1242,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -1315,7 +1315,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -1388,7 +1388,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -1461,7 +1461,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;
@@ -1534,7 +1534,7 @@ function loadArmies() {
                         }
                         html += `<a href="/armybuilder/${id}" role="button" class="btn btn-success">Build!</a>`;
                         html += `<a href="#" role="button" class="btn btn-danger deleteArmyButton" id="deleteArmy" + ${id} onclick="deleteArmy(${id})">Delete</a>`;
-                        html += `<input class="armyId" type="hidden" value=${id}>`
+                        html += `<input class="armyId" type="hidden" value=${id}>`;
                         html += "</div>"; //close card body
                         html += "</div>"; //close front face
                         html += `<div class="back">`;

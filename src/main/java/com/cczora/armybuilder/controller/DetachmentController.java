@@ -101,10 +101,10 @@ public class DetachmentController {
             authorizationService.validatePrincipalArmy(principal, armyId);
         }
         if(deleteDetachment) {
-            service.deleteDetachment(detachmentId, armyId);
+            service.deleteDetachment(detachmentId);
         }
         else {
-            service.deleteUnitsForDetachment(detachmentId, armyId);
+            service.deleteUnitsForDetachment(detachmentId);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

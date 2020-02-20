@@ -20,12 +20,12 @@ public class ArmyMapper {
     public Army armyDTOToArmy(ArmyDTO dto, String username) {
         FactionType faction = typeRepo.findFactionTypeByName(dto.getFactionName());
         return Army.builder()
+                .username(username)
                 .commandPoints(dto.getCommandPoints())
                 .notes(dto.getNotes())
                 .faction(faction)
                 .factionTypeId(faction.getFactionTypeId())
                 .sizeClass(dto.getSizeClass())
-                .username(username)
                 .name(dto.getName())
                 .id(dto.getArmyId())
                 .build();

@@ -11,7 +11,6 @@ import com.cczora.armybuilder.models.entity.FactionType;
 import com.cczora.armybuilder.models.entity.Unit;
 import com.cczora.armybuilder.models.mapping.ArmyMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -70,12 +69,9 @@ public class ArmyService {
             throw new NotFoundException(String.format("Faction %s not found.", army.getFactionName()));
         }
         Army armyEntity = mapper.armyDTOToArmy(army, username);
-        if(army.getArmyId() == null) {
-            armyEntity.setId(UUID.randomUUID());
-        }
+        if (army.getArmyId() == null) armyEntity.setId(UUID.randomUUID());
         armyEntity.setCommandPoints(3);
         armyEntity.setUsername(username);
-        armyEntity.setFaction(factionRepo.findFactionTypeByName(army.getFactionName()));
         armyEntity = armyRepo.save(armyEntity);
         return mapper.armyToArmyDTO(armyEntity);
     }

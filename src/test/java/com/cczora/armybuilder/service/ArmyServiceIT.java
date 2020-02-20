@@ -6,7 +6,9 @@ import com.cczora.armybuilder.data.fields.ArmyFieldRepository;
 import com.cczora.armybuilder.models.KeyValuePair;
 import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
-import com.cczora.armybuilder.models.entity.*;
+import com.cczora.armybuilder.models.entity.Account;
+import com.cczora.armybuilder.models.entity.Unit;
+import com.cczora.armybuilder.models.entity.UnitType;
 import com.cczora.armybuilder.models.mapping.ArmyMapper;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
@@ -19,12 +21,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -35,14 +35,13 @@ public class ArmyServiceIT {
     private ArmyRepository armyRepo;
     private DetachmentRepository detachRepo;
     private UnitRepository unitRepo;
-    private UnitTypeRepository unitTypeRepo;
     private ArmyService service;
     private Faker faker = new Faker();
 
     @Autowired
     public ArmyServiceIT(UserRepository userRepo1, UserRepository userRepo,
                          ArmyRepository armyRepo,
-                         DetachmentRepository detachRepo, DetachmentTypeRepository typeRepo, UnitRepository unitRepo1, UnitTypeRepository unitTypeRepo, ArmyMapper mapper,
+                         DetachmentRepository detachRepo, UnitRepository unitRepo1, ArmyMapper mapper,
                          ArmyFieldRepository armyFieldsRepo,
                          FactionTypeRepository factionTypeRepo,
                          DetachmentRepository detachmentRepo,
@@ -51,7 +50,6 @@ public class ArmyServiceIT {
         this.armyRepo = armyRepo;
         this.detachRepo = detachRepo;
         this.unitRepo = unitRepo1;
-        this.unitTypeRepo = unitTypeRepo;
         this.service = new ArmyService(userRepo, armyRepo, mapper, armyFieldsRepo, factionTypeRepo, detachmentRepo, unitRepo);
     }
 
@@ -148,8 +146,9 @@ public class ArmyServiceIT {
     //region private methods
 
     private void addTestWetArmy() {
-        service.addArmy(makeTestArmyDTO(), TestConstants.username);
-        detachRepo.save(makeTestDetachment());
+        armyRepo.save(TestConstants.testArmy);
+        assertTrue(armyRepo.findById(TestConstants.armyId).isPresent());
+        detachRepo.save(TestConstants.testDetachment);
         assertEquals(1, detachRepo.findAllByArmyId(TestConstants.armyId).size());
         unitRepo.save(makeTestUnit());
         assertEquals(1, unitRepo.findAllByDetachmentId(TestConstants.detachmentId).size());
@@ -158,27 +157,10 @@ public class ArmyServiceIT {
     private ArmyDTO makeTestArmyDTO() {
         return ArmyDTO.builder()
                 .armyId(TestConstants.armyId)
-                .name(faker.lorem().words(1).get(0))
-                .sizeClass("small")
-                .factionName("Necrons")
+                .name(faker.lorem().word())
+                .sizeClass(TestConstants.sizeClass)
+                .factionName(TestConstants.factionTypeName)
                 .notes(faker.zelda().character())
-                .build();
-    }
-
-    private Detachment makeTestDetachment() {
-        return Detachment.builder()
-                .units(new ArrayList<>())
-                .id(TestConstants.detachmentId)
-                .name(faker.funnyName().name())
-                .detachmentType(DetachmentType.builder()
-                        .detachmentTypeId(TestConstants.detachmentTypeId)
-                        .name(TestConstants.detachmentTypeName)
-                        .build())
-                .armyId(TestConstants.armyId)
-                .faction(FactionType.builder()
-                        .factionTypeId(TestConstants.factionTypeId)
-                        .name(TestConstants.factionTypeName)
-                        .build())
                 .build();
     }
 
@@ -190,6 +172,7 @@ public class ArmyServiceIT {
                         .unit_type_id(TestConstants.unitTypeId)
                         .name(TestConstants.unitTypeName)
                         .build())
+                .unitTypeId(TestConstants.unitTypeId)
                 .name(faker.lorem().word())
                 .build();
     }

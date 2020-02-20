@@ -8,7 +8,6 @@ import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
 import com.cczora.armybuilder.models.entity.*;
 import com.cczora.armybuilder.models.mapping.DetachmentMapper;
 import com.google.common.collect.Lists;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +55,12 @@ public class DetachmentService {
     }
 
     public List<DetachmentDTO> getDetachmentsByArmyId(UUID armyId) throws PersistenceException {
-        List<Detachment> detachmentsForArmy =  detachmentRepository.findAllByArmyId(armyId);
+        List<Detachment> detachmentsForArmy = detachmentRepository.findAllByArmyId(armyId);
         return detachmentsForArmy.stream().map(mapper::entityToDto).collect(Collectors.toList());
-
     }
 
     public List<Detachment> getFullDetachmentsByArmyId(UUID armyId) throws PersistenceException {
-        List<Detachment> detachmentsForArmy =  detachmentRepository.findAllByArmyId(armyId);
+        List<Detachment> detachmentsForArmy = detachmentRepository.findAllByArmyId(armyId);
         for(Detachment d : detachmentsForArmy) {
             d.setUnits(unitRepo.findAllByDetachmentId(d.getId()));
         }
@@ -148,32 +146,36 @@ public class DetachmentService {
                 }
                 detachmentRepository.save(currDetach);
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             log.error("Error editing detachment {}: {}", dto.getDetachmentId(), e.getMessage());
             throw e;
         }
     }
 
-    public void deleteDetachment(UUID detachmentId, UUID armyId) throws NotFoundException {
-        isInArmy(detachmentId, armyId);
+    public void deleteDetachment(UUID detachmentId) throws NotFoundException {
+        isInArmy(detachmentId);
         detachmentRepository.deleteById(detachmentId);
     }
 
-    public void deleteUnitsForDetachment(UUID detachmentId, UUID armyId) throws NotFoundException {
-        isInArmy(detachmentId, armyId);
+    public void deleteUnitsForDetachment(UUID detachmentId) throws NotFoundException {
+        isInArmy(detachmentId);
         unitRepo.deleteInBatch(unitRepo.findAllByDetachmentId(detachmentId));
     }
 
     //region private methods
 
-    private void isInArmy(UUID detachmentId, UUID armyId) throws NotFoundException {
-        boolean isInArmy =  detachmentRepository.findAllByArmyId(armyId).stream()
+    private void isInArmy(UUID detachmentId) throws NotFoundException {
+        UUID armyId = findArmyIdForDetachment(detachmentId);
+        boolean isInArmy = detachmentRepository.findAllByArmyId(armyId).stream()
                 .anyMatch(d -> d.getId().equals(detachmentId));
-        if(!isInArmy) {
+        if (!isInArmy) {
             log.error("Detachment {} not found in army {}", detachmentId, armyId);
             throw new NotFoundException(String.format("Detachment %s not found in army %s", detachmentId, armyId));
         }
+    }
+
+    public UUID findArmyIdForDetachment(UUID detachmentId) throws PersistenceException {
+        return detachmentRepository.findArmyIdForDetachment(detachmentId);
     }
 
     //endregion

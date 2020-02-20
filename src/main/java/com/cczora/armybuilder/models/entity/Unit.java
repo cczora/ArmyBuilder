@@ -2,10 +2,11 @@ package com.cczora.armybuilder.models.entity;
 
 import lombok.*;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity

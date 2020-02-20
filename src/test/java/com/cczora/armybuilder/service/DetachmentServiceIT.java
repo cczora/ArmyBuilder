@@ -93,13 +93,13 @@ public class DetachmentServiceIT {
         assertEquals(TestConstants.updatedName, fromRepo.get(0).getName());
         assertEquals(TestConstants.updatedNotes, fromRepo.get(0).getNotes());
 
-        service.deleteDetachment(testDetachment.getDetachmentId(), testDetachment.getArmyId());
+        service.deleteDetachment(testDetachment.getDetachmentId());
         fromRepo = service.getDetachmentsByArmyId(TestConstants.armyId);
         assertEquals(0, fromRepo.size());
     }
 
     @Test
-    public void deleteDetachment_deleteFlagSetToFalse_emptyUnits() throws Exception {
+    public void deleteDetachment_deleteFlagSetToFalse_emptyUnits() {
         service.addDetachment(makeTestDetachmentDTO());
         Unit unit = makeTestUnit();
         unitRepo.save(unit);
@@ -109,7 +109,7 @@ public class DetachmentServiceIT {
         assertEquals(unitsForDetach.size(), 1);
         assertEquals(unitsForDetach.get(0), unit);
 
-        service.deleteUnitsForDetachment(TestConstants.detachmentId, TestConstants.armyId);
+        service.deleteUnitsForDetachment(TestConstants.detachmentId);
 
         detachment = Optional.ofNullable(service.getFullDetachment(TestConstants.detachmentId));
         assertTrue(detachment.isPresent());

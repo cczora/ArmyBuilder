@@ -249,9 +249,9 @@ function loadUnitTypes() {
                     $(this).css("cursor: grab");
                 });
 
-                $(".draggable").on("mousedown", function() {
+                $(".draggable").on("mousedown", function () {
                     $(this).css("cursor: grabbing");
-                })
+                });
 
                 $(".draggable").on("dragstop", function(event, ui) {
                     $(this).css("cursor: grab");
@@ -314,7 +314,7 @@ function loadArmyInfo(detachments) {
         var id = detachments[i].detachmentId;
         var html = "";
 
-        html += `<h6 class="detachmentName" id="detachment${detachmentModule}">${name}</h6>`
+        html += `<h6 class="detachmentName" id="detachment${detachmentModule}">${name}</h6>`;
         //visually set detachment slots in detachment module based on type
         switch (type) {
             case 1: //patrol req: *1-2hq*, *1-3troop*, 0-2elite, 0-2FA, 0-2HS, 0-2fly
@@ -642,7 +642,7 @@ function addDetachment(object) {
 
     if (detachmentCount > detachmentLimit) {
         $("#detachmentAddFullToast").toast("show");
-        return;
+
     }
 }
 

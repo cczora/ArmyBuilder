@@ -1,6 +1,5 @@
 package com.cczora.armybuilder.models.mapping;
 
-import com.cczora.armybuilder.data.UnitRepository;
 import com.cczora.armybuilder.data.UnitTypeRepository;
 import com.cczora.armybuilder.models.dto.UnitDTO;
 import com.cczora.armybuilder.models.entity.Unit;

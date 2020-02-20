@@ -4,7 +4,6 @@ import com.cczora.armybuilder.config.AppConstants;
 import com.cczora.armybuilder.config.AuthorizationService;
 import com.cczora.armybuilder.models.dto.UnitDTO;
 import com.cczora.armybuilder.models.dto.UnitPatchRequestDTO;
-import com.cczora.armybuilder.models.entity.Unit;
 import com.cczora.armybuilder.models.entity.UnitType;
 import com.cczora.armybuilder.service.UnitService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,18 +45,18 @@ public class UnitController {
         return ResponseEntity.ok(service.getAllUnitTypes());
     }
 
-    @PostMapping("/{armyId}")
-    public ResponseEntity<UnitDTO> addUnitToDetachment(@RequestBody UnitDTO unit, @PathVariable UUID armyId, Principal principal) throws ValidationException, NotFoundException {
-        if(principal != null) {
+    @PostMapping
+    public ResponseEntity<UnitDTO> addUnitToDetachment(@RequestBody UnitDTO unit, Principal principal) throws ValidationException, NotFoundException {
+        if (principal != null) {
             authorizationService.validatePrincipalUnit(principal, unit.getId());
         }
-        UnitDTO newUnit = service.addUnit(unit, armyId);
+        UnitDTO newUnit = service.addUnit(unit);
         return ResponseEntity.ok(newUnit);
     }
 
     @PatchMapping("/{unitId}")
     public ResponseEntity<?> editUnit(@RequestBody UnitPatchRequestDTO dto, Principal principal) throws NoSuchFieldException, ValidationException {
-        if(principal != null) {
+        if (principal != null) {
             authorizationService.validatePrincipalUnit(principal, dto.getUnitId());
         }
         service.editUnit(dto);

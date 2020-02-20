@@ -19,6 +19,8 @@ import java.util.UUID;
 @ToString
 public class UnitType implements Serializable {
 
+    //TODO: make these enums?
+
     private static final long serialVersionUID = -8952298989988435673L;
 
     @Id
