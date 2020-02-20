@@ -54,8 +54,17 @@ public class ArmyService {
         return factionRepo.findAll();
     }
 
-    public Army getArmyById(UUID armyId) {
-        return armyRepo.findById(armyId).isPresent() ? armyRepo.findById(armyId).get() : new Army();
+    public Army getArmyById(UUID armyId) throws NotFoundException {
+        try {
+            Optional<Army> army = armyRepo.findById(armyId);
+            if (army.isPresent()) return army.get();
+            else {
+                throw new NotFoundException(String.format("Army %s not found.", armyId));
+            }
+        } catch (Exception e) {
+            log.error("Error getting army {}: {}", armyId, e.getMessage());
+            throw e;
+        }
     }
 
     public List<ArmyDTO> getArmiesByUsername(String username) {
@@ -65,7 +74,7 @@ public class ArmyService {
     }
 
     public ArmyDTO addArmy(@Valid ArmyDTO army, String username) throws NotFoundException, ValidationException, DataAccessException {
-        if(Optional.ofNullable(factionRepo.findFactionTypeByName(army.getFactionName())).isEmpty()) {
+        if (Optional.ofNullable(factionRepo.findFactionTypeByName(army.getFactionName())).isEmpty()) {
             throw new NotFoundException(String.format("Faction %s not found.", army.getFactionName()));
         }
         Army armyEntity = mapper.armyDTOToArmy(army, username);

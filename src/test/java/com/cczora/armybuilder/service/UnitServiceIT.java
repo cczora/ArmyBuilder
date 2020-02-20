@@ -55,7 +55,7 @@ public class UnitServiceIT {
     @Test
     public void UnitCRUD() throws Exception {
         UnitDTO testUnit = makeTestUnitDTO();
-        testUnit = service.addUnit(testUnit);
+        testUnit = service.addUnit(testUnit, TestConstants.detachmentId);
         List<UnitDTO> fromRepo = service.getUnitsForDetachment(TestConstants.detachmentId);
         assertEquals(1, fromRepo.size());
         assertEquals(testUnit, fromRepo.get(0));
@@ -92,7 +92,7 @@ public class UnitServiceIT {
     public void addUnit_invalidUnitType() {
         UnitDTO unitDTO = makeTestUnitDTO();
         unitDTO.setUnitType("Invalid Unit Type");
-        assertThrows(NotFoundException.class, () -> service.addUnit(unitDTO));
+        assertThrows(NotFoundException.class, () -> service.addUnit(unitDTO, TestConstants.detachmentId));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class UnitServiceIT {
 
     @Test
     public void editUnit_validPatchField_invalidValue() {
-        service.addUnit(makeTestUnitDTO());
+        service.addUnit(makeTestUnitDTO(), TestConstants.detachmentId);
         UnitPatchRequestDTO patchRequestDTO = UnitPatchRequestDTO.builder()
                 .unitId(TestConstants.unitId)
                 .updates(Collections.singletonList(KeyValuePair.builder()

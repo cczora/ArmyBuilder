@@ -57,15 +57,15 @@ public class UnitService {
         return unitTypeRepo.findAll();
     }
 
-    public UnitDTO addUnit(UnitDTO unitToAdd) throws NotFoundException {
+    public UnitDTO addUnit(UnitDTO unitToAdd, UUID detachmentId) throws NotFoundException {
         try {
-            Optional<UUID> armyId = Optional.ofNullable(detachmentService.findArmyIdForDetachment(unitToAdd.getDetachmentId()));
+            Optional<UUID> armyId = Optional.ofNullable(detachmentService.findArmyIdForDetachment(detachmentId));
             if (armyId.isPresent()) {
                 Optional<List<DetachmentDTO>> detachments = Optional.ofNullable(detachmentService.getDetachmentsByArmyId(armyId.get()));
                 if (detachments.isPresent()) {
                     boolean isInDetachmentsForArmy = detachments.get().stream()
                             .map(DetachmentDTO::getDetachmentId)
-                            .collect(Collectors.toList()).contains(unitToAdd.getDetachmentId());
+                            .collect(Collectors.toList()).contains(detachmentId);
                     if (isInDetachmentsForArmy) {
                         //validate unit type name, add random uuid and standard name if not given
                         if (unitToAdd.getId() == null) unitToAdd.setId(UUID.randomUUID());
@@ -82,7 +82,7 @@ public class UnitService {
                         return mapper.entityToDTO(unitEntity);
                     }
                 } else { //no detachments
-                    String message = String.format("Detachment %s not found in army %s", unitToAdd.getDetachmentId(), armyId);
+                    String message = String.format("Detachment %s not found in army %s", detachmentId, armyId);
                     log.error(message);
                     throw new NotFoundException(message);
                 }

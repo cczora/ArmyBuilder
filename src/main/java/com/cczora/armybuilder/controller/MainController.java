@@ -36,7 +36,7 @@ public class MainController {
     }
 
     @GetMapping("/login")
-    public String login(Account user) {
+    public String login() {
         return "login";
     }
     

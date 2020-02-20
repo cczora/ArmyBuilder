@@ -13,7 +13,7 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class AppConstants {
 
-    public static final String basePath = "/armybuilder";
+    public static final String basePath = "/";
 
     public static Map<String, Object> checkRequiredFieldsForPatch(CrudRepository<?,?> repo, List<KeyValuePair> inputFields) throws NoSuchFieldException {
         List<String> updateFields = StreamSupport.stream(repo.findAll().spliterator(), false)
