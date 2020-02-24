@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -22,6 +23,7 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
     private static final String USER_NOT_FOUND = "User not found, please correct your input and try again.";
 
     @ExceptionHandler(ValidationException.class)
+    @ResponseStatus
     public final ResponseEntity<Error> handleValidationException(ValidationException ex, WebRequest request) {
         return new ResponseEntity<>(
                 Error.builder()
@@ -32,6 +34,7 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchFieldException.class)
+    @ResponseStatus
     public final ResponseEntity<Error> handleNoSuchFieldException(NoSuchFieldException ex, WebRequest request) {
         return new ResponseEntity<>(
                 Error.builder()
@@ -42,6 +45,7 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus
     public final ResponseEntity<Error> handleNotFoundException(NotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(
                 Error.builder()
@@ -52,6 +56,7 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(PersistenceException.class)
+    @ResponseStatus
     public final ResponseEntity<Error> handlePersistenceException(PersistenceException ex, WebRequest request) {
         return new ResponseEntity<>(
                 Error.builder()
@@ -62,6 +67,7 @@ public class ControllerErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
+    @ResponseStatus
     public final ResponseEntity<Error> catchAllErrorHandler(Exception ex, WebRequest request) {
         return new ResponseEntity<>(
                 Error.builder()

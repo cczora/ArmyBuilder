@@ -32,21 +32,21 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws NotFoundException {
         Optional<Account> user = users.findById(username);
-        
-        if(user.isEmpty()) {
+
+        if (user.isEmpty()) {
             throw new NotFoundException(String.format("Username %s not found", username));
         }
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority("USER"));
-
-        return new org.springframework.security.core.userdetails.User(user.get().getUsername(), user.get().getPassword(), grantedAuthorities);
+        //wrap in a class extending UserDetails
+        return new MyUserPrincipal(user.get(), grantedAuthorities);
     }
 
     public void add(Account user) throws DuplicateUsernameException {
         
         Optional<Account> appUser = users.findById(user.getUsername());
-        
-        if (appUser.isPresent()) { //already there
+
+        if (appUser.isPresent()) {
             throw new DuplicateUsernameException(String.format("User %s is already registered", user.getUsername()));
         }
 

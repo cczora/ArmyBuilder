@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8">
@@ -23,14 +23,15 @@
 
                     <h5 th:if="${#request.getParameter('login_error') == '1'}" id="errorHeader">Wrong Id or Password!</h5>
 
-                    <form method="POST" id="signupForm">
+                    <form id="loginForm" onsubmit="authenticate()">
                         <input type="text" class="form-control" name="username" id="username" placeholder="Username">
 
-                        <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                        <input type="password" name="password" class="form-control" id="password"
+                               placeholder="Password">
 
                         <div class="form-group">
-                            <button type="submit" class="btn btn-success" id="search-button"><i class="fas fa-check"></i></button>
-                            <a role="button" class="btn btn-danger" href="/"><i class="fas fa-times"></i></a>
+                            <button class="btn btn-success" id="loginButton"><i class="fas fa-check"></i></button>
+                            <a class="btn btn-danger" href="/" role="button"><i class="fas fa-times"></i></a>
                         </div>
 
                     </form>
@@ -50,6 +51,7 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/e3553c8da6.js"></script>
+    <script src="../static/js/login.js"></script>
 
 </body>
 

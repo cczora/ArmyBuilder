@@ -7,7 +7,9 @@ import com.cczora.armybuilder.models.dto.ArmyDTO;
 import com.cczora.armybuilder.models.dto.ArmyPatchRequestDTO;
 import com.cczora.armybuilder.models.entity.Army;
 import com.cczora.armybuilder.service.ArmyService;
+import com.cczora.armybuilder.service.MyUserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,6 @@ import org.webjars.NotFoundException;
 import javax.persistence.PersistenceException;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,9 +35,16 @@ public class ArmyController {
         this.authorizationService = authorizationService;
     }
 
+    //TODO: remove once JWT is implemented!
+    @GetMapping("/hello")
+    @Operation(summary = "Hello!", security = @SecurityRequirement(name = "bearerAuth"))
+    public String hello() {
+        return "Hello World";
+    }
+
     @Operation(summary = "Get a single army's details")
     @GetMapping("/{id}")
-    public ResponseEntity<Army> getArmy(@PathVariable(name = "id") UUID armyId, Principal principal)
+    public ResponseEntity<Army> getArmy(@PathVariable(name = "id") UUID armyId, MyUserPrincipal principal)
             throws ValidationException, NotFoundException {
         if (principal != null) {
             authorizationService.validatePrincipalArmy(principal, armyId);
@@ -46,7 +54,7 @@ public class ArmyController {
 
     @Operation(summary = "Gets all armies for the given user")
     @GetMapping("/{username}/armies")
-    public ResponseEntity<List<ArmyDTO>> getArmiesByUsername(@PathVariable String username, Principal principal)
+    public ResponseEntity<List<ArmyDTO>> getArmiesByUsername(@PathVariable String username, MyUserPrincipal principal)
             throws ValidationException, PersistenceException, NotFoundException {
         if (principal != null) {
             authorizationService.validatePrincipalUser(principal, username);
@@ -59,7 +67,7 @@ public class ArmyController {
     public ResponseEntity<UUID> addArmy(
             @RequestParam String username,
             @RequestBody @Valid ArmyDTO army,
-            Principal principal) throws PersistenceException, ValidationException, NotFoundException {
+            MyUserPrincipal principal) throws PersistenceException, ValidationException, NotFoundException {
         if (principal != null) {
             authorizationService.validatePrincipalUser(principal, username);
         }
@@ -71,7 +79,7 @@ public class ArmyController {
     @PatchMapping
     public void editArmy(@RequestParam String username,
                          @RequestBody ArmyPatchRequestDTO army,
-                         Principal principal)
+                         MyUserPrincipal principal)
             throws PersistenceException, ValidationException, NotFoundException, NoSuchFieldException {
         if (principal != null) {
             authorizationService.validatePrincipalUser(principal, username);
@@ -81,7 +89,7 @@ public class ArmyController {
 
     @Operation(summary = "Deletes an army")
     @DeleteMapping("/{id}")
-    public void deleteArmy(@RequestParam String username, @PathVariable(name = "id") UUID armyId, Principal principal)
+    public void deleteArmy(@RequestParam String username, @PathVariable(name = "id") UUID armyId, MyUserPrincipal principal)
             throws ValidationException, PersistenceException, NotFoundException {
         if (principal != null) {
             authorizationService.validatePrincipalUser(principal, username);

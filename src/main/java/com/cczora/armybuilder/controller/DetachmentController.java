@@ -8,6 +8,7 @@ import com.cczora.armybuilder.models.dto.DetachmentPatchRequestDTO;
 import com.cczora.armybuilder.models.entity.Detachment;
 import com.cczora.armybuilder.models.entity.DetachmentType;
 import com.cczora.armybuilder.service.DetachmentService;
+import com.cczora.armybuilder.service.MyUserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import org.webjars.NotFoundException;
 
 import javax.persistence.PersistenceException;
 import javax.validation.ValidationException;
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +39,7 @@ public class DetachmentController {
     public ResponseEntity<List<?>> getDetachmentsForArmy(
             @PathVariable UUID armyId,
             @RequestParam(defaultValue = "false") boolean getFullDetachments,
-            Principal principal) throws ValidationException, PersistenceException {
+            MyUserPrincipal principal) throws ValidationException, PersistenceException {
         if (principal != null) {
             authorizationService.validatePrincipalArmy(principal, armyId);
         }
@@ -52,7 +52,7 @@ public class DetachmentController {
 
     @Operation(summary = "Gets a single detachment with its associated units")
     @GetMapping("/{id}")
-    public ResponseEntity<Detachment> getDetachment(@PathVariable(name = "id") UUID detachmentId, Principal principal)
+    public ResponseEntity<Detachment> getDetachment(@PathVariable(name = "id") UUID detachmentId, MyUserPrincipal principal)
             throws PersistenceException, ValidationException {
         if (principal != null) {
             authorizationService.validatePrincipalDetachment(principal, detachmentId);
@@ -69,7 +69,7 @@ public class DetachmentController {
     @Operation(summary = "Adds a detachment to the given army")
     @PostMapping
     public void addDetachmentToArmy(
-            @RequestParam UUID armyId, @RequestBody DetachmentDTO detachment, Principal principal)
+            @RequestParam UUID armyId, @RequestBody DetachmentDTO detachment, MyUserPrincipal principal)
             throws PersistenceException, ValidationException {
         if (principal != null) {
             authorizationService.validatePrincipalArmy(principal, armyId);
@@ -80,7 +80,7 @@ public class DetachmentController {
 
     @Operation(summary = "Edits a detachment's properties")
     @PatchMapping
-    public void editDetachment(@RequestBody DetachmentPatchRequestDTO dto, Principal principal)
+    public void editDetachment(@RequestBody DetachmentPatchRequestDTO dto, MyUserPrincipal principal)
             throws NoSuchFieldException, ValidationException, PersistenceException {
         if (principal != null) {
             authorizationService.validatePrincipalDetachment(principal, dto.getDetachmentId());
@@ -93,7 +93,7 @@ public class DetachmentController {
     public void deleteDetachment(
             @RequestParam(defaultValue = "true") Boolean deleteDetachment,
             @PathVariable(name = "id") UUID detachmentId,
-            Principal principal) throws NotFoundException, ValidationException, PersistenceException {
+            MyUserPrincipal principal) throws NotFoundException, ValidationException, PersistenceException {
         if (principal != null) {
             authorizationService.validatePrincipalDetachment(principal, detachmentId);
         }
