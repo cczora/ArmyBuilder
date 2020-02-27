@@ -16,6 +16,7 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
 
+    //TODO: set this in an env var for the application through Heroku!
     private String SECRET_KEY = "O'Sha@serra = 6@e";
 
     public String extractUsername(String token) {

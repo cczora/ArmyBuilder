@@ -25,15 +25,15 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/armybuilder/army/{armyId}">
+                    <form action="/army/{armyId}" method="POST">
                         <div class="form-group">
                             <input type="text" class="form-control" id="armyName" name="name" placeholder="Army Name">
                         </div>
                         <div class="form-group">
                             <select name="faction" id="factionTypeId" class="form-control">
-                                <option selected="selected"> Faction </option>
+                                <option selected="selected"> Faction</option>
                                 <option th:each="faction: ${factions}" th:text="${faction.name}"
-                                    th:value="${faction.factionTypeId}">
+                                        th:value="${faction.factionTypeId}">
                                 </option>
                             </select>
                         </div>

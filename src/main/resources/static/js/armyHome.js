@@ -1,8 +1,11 @@
-var username = $("#username").val();
-var factions = $(factions);
-var armyArray = [];
+let username = $("#username").val();
+let factions = $(factions);
+let armyArray = [];
 
-$(document).ready(loadArmies());
+$(document).ready(function () {
+    username = $.get("/getUsername", {"jwt": localStorage.getItem("jwt")});
+    loadArmies();
+});
 
 $("#submitArmyButton").on("click", function (event) {
     event.preventDefault();
@@ -48,16 +51,17 @@ function deleteArmy(armyId) {
 function loadArmies() {
     $.ajax({
         method: "GET",
-        url: `/api/armies/${username}`,
+        url: `${username}/armies`,
         success: function (armyList) {
             armyArray = armyList;
+            //TODO: make this a handlebars template!
             armyList.forEach(army => {
                 //make html for army div
-                var id = army.armyId;
-                var html = `<div class='card armyCard flipCard' id="${id}">`;
+                let id = army.armyId;
+                let html = `<div class='card armyCard flipCard' id="${id}">`;
 
                 //set faction picture for army
-                var faction = army.factionTypeId;
+                let faction = army.factionTypeId;
 
                 switch (faction) {
                     // case "Chaos Marines":
@@ -1665,10 +1669,10 @@ function loadArmies() {
                         }
                     });
                 });
-    
+
             });
 
-            
+
         },
 
         error: function () {

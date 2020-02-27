@@ -9,7 +9,6 @@ import com.cczora.armybuilder.models.entity.Army;
 import com.cczora.armybuilder.service.ArmyService;
 import com.cczora.armybuilder.service.MyUserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +32,6 @@ public class ArmyController {
     public ArmyController(ArmyService service, AuthorizationServiceImpl authorizationService) {
         this.service = service;
         this.authorizationService = authorizationService;
-    }
-
-    //TODO: remove once JWT is implemented!
-    @GetMapping("/hello")
-    @Operation(summary = "Hello!", security = @SecurityRequirement(name = "bearerAuth"))
-    public String hello() {
-        return "Hello World";
     }
 
     @Operation(summary = "Get a single army's details")

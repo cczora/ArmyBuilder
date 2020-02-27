@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -56,14 +57,21 @@ public class MainController {
     }
 
     @GetMapping("/home")
-    public String gotoUserHomePage(Model model, MyUserPrincipal principal, HttpServletRequest request) {
-        String username = jwt.extractUsername(request.getHeader("jwt"));
-        if (principal == null || !principal.getUsername().equals(username)) {
+    public String gotoUserHomePage(Model model, HttpServletRequest request) {
+        //TODO: move this to the AuthenticationService once it works: return the username?
+        Optional<String> authHeader = Optional.ofNullable(request.getHeader("Authentication"));
+        String jwtToken = null;
+        if (authHeader.isPresent() && authHeader.get().startsWith("Bearer ")) {
+            jwtToken = authHeader.get().substring(7);
+        }
+        Optional<Object> expired = Optional.ofNullable(request.getAttribute("expired"));
+        if (expired.isPresent() && expired.get().equals(Boolean.TRUE)) {
             return "loggedOut";
         }
-        model.addAttribute("username", principal.getUsername());
+        String username = jwt.extractUsername(jwtToken);
+        model.addAttribute("username", username);
         model.addAttribute("factions", armyService.getAllFactions());
-        model.addAttribute("armies", armyService.getArmiesByUsername(principal.getUsername()));
+        model.addAttribute("armies", armyService.getArmiesByUsername(username));
         return "armyHome";
     }
 

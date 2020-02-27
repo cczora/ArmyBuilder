@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -27,16 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(@Lazy UserService userDetails, JwtRequestFilter jwtRequestFilter) {
         this.userDetails = userDetails;
         this.jwtRequestFilter = jwtRequestFilter;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetails)
-                .and()
-                .inMemoryAuthentication()
-                .withUser("foo")
-                .password(bCryptPasswordEncoder().encode("foo"))
-                .roles("USER");
     }
 
     @Override
@@ -59,12 +48,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/webjars/**").permitAll()
                 //...but any other requests have to be authenticated first
                 .antMatchers("/army", "/detachment", "/unit").authenticated()
-                //don't manage sessions for me
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                //don't manage sessions for me
+//                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true)
+                .successForwardUrl("/home")
+                .defaultSuccessUrl("/home", true)
                 .failureUrl("/login?login_error=1").permitAll()
                 .and()
                 .logout().logoutRequestMatcher(
